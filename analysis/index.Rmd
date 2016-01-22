@@ -6,6 +6,12 @@ title: "Home"
 
 **Code version:** `r system("git log -1 --format='%H'", intern = TRUE)`
 
+## Lecture Notes
+
+*   [Lecture 1](../docs/lec1.pdf)
+
+
+
 ## Sebastian Pott Data
 
 *  [Simple Markov Exercise](potts_1.html)
