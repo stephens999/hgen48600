@@ -1,0 +1,72 @@
+---
+title: "Intro to Potts Data"
+author: "Matthew Stephens"
+date: 2016-01-22
+---
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r system("git log -1 --format='%H'", intern = TRUE)`
+
+```{r chunk-options, include=FALSE}
+source("chunk-options.R")
+```
+
+This is a very brief intro to some data from Sebastian Pott (a research associate here), 
+which he kindly
+agreed to share with us for teaching purposes. The initial goal is
+to fit a Markov chain to some of these data, and compare it to a model where the data are independent. (I suspect that neither of these models will be a good fit to the data, although I have not actually tried it yet.)
+
+## Read Data
+
+The data related to methylation or non-methylation at positions along the genome.
+However, these are not standard methylation data - essentially the experimental protocol
+is such that locations where the DNA is more "open" are more likely to read out as "methylated". So think of the methylation/non-methlation as a noisy measure of "open"/"closed".
+
+Sebastian processed the sequence data, aligning reads to the genome, to produce a bed file `Test_region_NOM37_methylation_C_in_GpC_hg38_chr9_131946471_134832670.bed`.
+Columns 1-6 contain the position of the nucleotide in the genome.
+Column 7 shows the the number of reads with a methylated C in this position.
+Column 8 contains the total number of reads mapping to the correct strand at this position.
+So Column 7 should be less than Column 8, and the difference in the two columns is the number of unmethylated reads at that position. 
+
+```{r}
+x = read.table("../data/potts/Test_region_NOM37_methylation_C_in_GpC_hg38_chr9_131946471_134832670.bed",stringsAsFactors = FALSE, header=FALSE)
+head(x)
+#check that, as claimed, V7 is never larger than V8
+sum(x$V7>x$V8)
+#make tables of coverage and counts
+table(x$V7)
+table(x$V8)
+```
+
+The coverage (column 8) is pretty low, and for now - mostly for simplicity - 
+we are going to ignore differences in coverage. So we're just going to ignore column 8.
+And, again for simplicity, we are going to binarize column 7 (most observations are 0 or 1 anyway!). So here goes:
+
+```{r}
+m = 1*(x$V7>0)
+head(m,100)
+```
+
+OK, so now `m` represents a very noisy binary observation of whether each position is 
+"open" or not. The exercise here is to fit and compare likelihoods for models where i) elements of $m$ are independent; b) $m$ follows a Markov chain. (It would also be good form to do some more simple plots or summaries to familiarize yourself more with the data before fitting the models!)
+
+a) Bernoulli model 
+    i) Fit a Bernoulli model to the data. That is, assuming the elements $m_i$ are independent Bernoulli($q$) for some $q$, estimate $q$ by maximum likelihood.  
+    ii) If $\hat{q}$ denotes the maximum likelihood estimate, and $l_{bern}$ denotes the log-likelihood function, compute the value of $l_{bern}(\hat{q}; m)$.
+
+b) Markov Chain
+    i) Fit a 2-state (0/1) Markov Chain to the vector $m$ by maximum likelihood.
+Here the parameter is the 2 by 2 transition matrix $P$ between the two states 0 and 1.
+[To get the Markov chain started, assume that the first observation $m_1$ is Bernoulli($\hat{q}),
+where $\hat{q}$ is the parameter estimated above.]
+
+    ii) Again, compute the log-likelihood value at the mle you have found. That is, if $l_{markov}$ denotes the log-likelihood function and $\hat{P}$ the mle for $P$, compute $l_{markov}(\hat{P}; m)$.
+
+c) Compare: comment on how different the two log-likelihoods you have computed are.
+
+## Session information
+
+```{r info}
+sessionInfo()
+```

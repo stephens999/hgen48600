@@ -6,11 +6,7 @@ title: "Home"
 
 **Code version:** `r system("git log -1 --format='%H'", intern = TRUE)`
 
-## Heading
+## Sebastian Pott Data
 
-*  [Making a project site](tutorial.html) ([2015-12-12 lab meeting slides](../docs/repo-setup-tutorial-stephens-lab-2015-12-03.pdf))
+*  [Simple Markov Exercise](potts_1.html)
 
-
-## Using Rmarkdown to document anaysis: An example
-
-*  [Use PCA to visualize some single-cell data](single-cell-pca.html)

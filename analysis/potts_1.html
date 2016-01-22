@@ -8,9 +8,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
+<meta name="author" content="Matthew Stephens" />
 
+<meta name="date" content="2016-01-22" />
 
-<title>Home</title>
+<title>Intro to Potts Data</title>
 
 <script src="libs/jquery-1.11.0/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -132,22 +134,92 @@ img {
 </div><!--/.navbar -->
 
 <div id="header">
-<h1 class="title">Home</h1>
+<h1 class="title">Intro to Potts Data</h1>
+<h4 class="author"><em>Matthew Stephens</em></h4>
+<h4 class="date"><em>2016-01-22</em></h4>
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#sebastian-pott-data">Sebastian Pott Data</a></li>
+<li><a href="#read-data">Read Data</a></li>
+<li><a href="#session-information">Session information</a></li>
 </ul>
 </div>
 
 <p><strong>Last updated:</strong> 2016-01-22</p>
-<p><strong>Code version:</strong> ecb5480aeeaddf9a53e9212aa79e4c683a1f3f6a</p>
-<div id="sebastian-pott-data" class="section level2">
-<h2>Sebastian Pott Data</h2>
-<ul>
-<li><a href="potts_1.html">Simple Markov Exercise</a></li>
-</ul>
+<p><strong>Code version:</strong> 98f57522faff6b03d93eb8f41c301e6c24070674</p>
+<p>This is a very brief intro to some data from Sebastian Pott (a research associate here), which he kindly agreed to share with us for teaching purposes. The initial goal is to fit a Markov chain to some of these data, and compare it to a model where the data are independent. (I suspect that neither of these models will be a good fit to the data, although I have not actually tried it yet.)</p>
+<div id="read-data" class="section level2">
+<h2>Read Data</h2>
+<p>The data related to methylation or non-methylation at positions along the genome. However, these are not standard methylation data - essentially the experimental protocol is such that locations where the DNA is more “open” are more likely to read out as “methylated”. So think of the methylation/non-methlation as a noisy measure of “open”/“closed”.</p>
+<p>Sebastian processed the sequence data, aligning reads to the genome, to produce a bed file <code>Test_region_NOM37_methylation_C_in_GpC_hg38_chr9_131946471_134832670.bed</code>. Columns 1-6 contain the position of the nucleotide in the genome. Column 7 shows the the number of reads with a methylated C in this position. Column 8 contains the total number of reads mapping to the correct strand at this position. So Column 7 should be less than Column 8, and the difference in the two columns is the number of unmethylated reads at that position.</p>
+<pre class="r"><code>x = read.table(&quot;../data/potts/Test_region_NOM37_methylation_C_in_GpC_hg38_chr9_131946471_134832670.bed&quot;,stringsAsFactors = FALSE, header=FALSE)
+head(x)</code></pre>
+<pre><code>    V1        V2        V3      V4 V5 V6 V7 V8
+1 chr9 131946692 131946693 region1  0  +  0  3
+2 chr9 131946703 131946704 region1  0  +  0  3
+3 chr9 131946722 131946723 region1  0  +  2  3
+4 chr9 131946726 131946727 region1  0  +  0  1
+5 chr9 131946749 131946750 region1  0  +  0  1
+6 chr9 131946796 131946797 region1  0  +  0  2</code></pre>
+<pre class="r"><code>#check that, as claimed, V7 is never larger than V8
+sum(x$V7&gt;x$V8)</code></pre>
+<pre><code>[1] 0</code></pre>
+<pre class="r"><code>#make tables of coverage and counts
+table(x$V7)</code></pre>
+<pre><code>
+    0     1     2     3     4     5     6     7     8     9    10    11 
+62784 11464  1550   345    99    56    30     8     8     4     3     1 
+   12    14    21 
+    1     1     1 </code></pre>
+<pre class="r"><code>table(x$V8)</code></pre>
+<pre><code>
+    1     2     3     4     5     6     7     8     9    10    11    12 
+27285 18698 11944  7585  4652  2736  1633   857   469   249   122    59 
+   13    14    15    17    20    21 
+   36    21     5     2     1     1 </code></pre>
+<p>The coverage (column 8) is pretty low, and for now - mostly for simplicity - we are going to ignore differences in coverage. So we’re just going to ignore column 8. And, again for simplicity, we are going to binarize column 7 (most observations are 0 or 1 anyway!). So here goes:</p>
+<pre class="r"><code>m = 1*(x$V7&gt;0)
+head(m,100)</code></pre>
+<pre><code>  [1] 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ [36] 0 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 1 0
+ [71] 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 1 1 1 0 1 0 0 0 0 0 0 1</code></pre>
+<p>OK, so now <code>m</code> represents a very noisy binary observation of whether each position is “open” or not. The exercise here is to fit and compare likelihoods for models where i) elements of <span class="math inline">\(m\)</span> are independent; b) <span class="math inline">\(m\)</span> follows a Markov chain. (It would also be good form to do some more simple plots or summaries to familiarize yourself more with the data before fitting the models!)</p>
+<ol style="list-style-type: lower-alpha">
+<li>Bernoulli model
+<ol style="list-style-type: lower-roman">
+<li>Fit a Bernoulli model to the data. That is, assuming the elements <span class="math inline">\(m_i\)</span> are independent Bernoulli(<span class="math inline">\(q\)</span>) for some <span class="math inline">\(q\)</span>, estimate <span class="math inline">\(q\)</span> by maximum likelihood.<br />
+</li>
+<li>If <span class="math inline">\(\hat{q}\)</span> denotes the maximum likelihood estimate, and <span class="math inline">\(l_{bern}\)</span> denotes the log-likelihood function, compute the value of <span class="math inline">\(l_{bern}(\hat{q}; m)\)</span>.</li>
+</ol></li>
+<li>Markov Chain
+<ol style="list-style-type: lower-roman">
+<li><p>Fit a 2-state (0/1) Markov Chain to the vector <span class="math inline">\(m\)</span> by maximum likelihood. Here the parameter is the 2 by 2 transition matrix <span class="math inline">\(P\)</span> between the two states 0 and 1. [To get the Markov chain started, assume that the first observation <span class="math inline">\(m_1\)</span> is Bernoulli($), where <span class="math inline">\(\hat{q}\)</span> is the parameter estimated above.]</p></li>
+<li><p>Again, compute the log-likelihood value at the mle you have found. That is, if <span class="math inline">\(l_{markov}\)</span> denotes the log-likelihood function and <span class="math inline">\(\hat{P}\)</span> the mle for <span class="math inline">\(P\)</span>, compute <span class="math inline">\(l_{markov}(\hat{P}; m)\)</span>.</p></li>
+</ol></li>
+<li>Compare: comment on how different the two log-likelihoods you have computed are.</li>
+</ol>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.2.3 (2015-12-10)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.11.2 (El Capitan)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] knitr_1.10.5
+
+loaded via a namespace (and not attached):
+ [1] magrittr_1.5    formatR_1.2     tools_3.2.3     htmltools_0.2.6
+ [5] yaml_2.1.13     stringi_0.5-5   rmarkdown_0.7   stringr_1.0.0  
+ [9] digest_0.6.8    evaluate_0.7   </code></pre>
 </div>
 
 
