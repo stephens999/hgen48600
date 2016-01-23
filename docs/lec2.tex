@@ -1,0 +1,230 @@
+% Created 2016-01-10 Sun 15:19
+\documentclass[10pt,containsverbatim,paralist]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage{amsmath}
+\usepackage{pdfpages}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{xmpmulti}
+\newcommand{\urlwofont}[1]{\burlstyle{same}\url{#1}}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname 1`/`basename #1 .tif`.png}
+\usepackage{geometry}
+\geometry{textwidth=6.5in,textheight=9in,marginparsep=7pt,marginparwidth=0.6in}
+\setcounter{secnumdepth}{2}
+\date{\today}
+\title{}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 24.5.1 (Org mode 8.2.10)}}
+\begin{document}
+
+
+\section{HG48600/STAT34550 Lectures}
+\label{sec-1}
+\subsection{Lecture: Graphical models: Introduction}
+\label{sec-1-1}
+\subsubsection*{Graphical models introduction}
+\label{sec-1-1-1}
+\begin{itemize}
+\item A tool for visualizing the structure of a probabilistic model
+\item Provides insights, such as conditional independence properties, by inspection of the graph
+\item Complex computations can be expressed as operations on the graph
+\item Graphical models - also sometimes called Bayesian networks
+\end{itemize}
+
+% \subsubsection*{A motivating example:}
+% \label{sec-1-1-2}
+% \begin{itemize}
+% \item Inheritance in a 3-generation pedigree
+% \label{sec-1-1-2-1}
+% \item Introduce shaded notation for conditioning
+% \label{sec-1-1-2-2}
+% \item Introduce idea of generative model - each edge represents a conditional probablity of "child | parents"
+% \label{sec-1-1-2-3}
+% \item Introduce idea of querying to get non-obvious relationships:
+% \label{sec-1-1-2-4}
+% \begin{itemize}
+% \item P(Paternal grandfather | child genotype)
+% \label{sec-1-1-2-4-1}
+% \end{itemize}
+% \item Introduce notion of "blocking" (d-seperation) and "information flow" through v-structures.
+% \label{sec-1-1-2-5}
+% \item Define conditional independence (maternal grandparent and proband indpt given maternal parent genotype)
+% \label{sec-1-1-2-6}
+% \begin{itemize}
+% \item Definition 1:
+% \label{sec-1-1-2-6-1}
+% X is conditionally independent of Z given Y if the probability distribution of X conditioned on both Y and Z is the same as the probability distribution of X conditioned only on Y:
+% $$P(X|Y,Z)=P(X|Y)$$
+% We represent this statement as $(X \perp Z |Y)$.
+% \end{itemize}
+% \item More formally establishing a graph and a Bayesian network:
+% \label{sec-1-1-2-7}
+% \begin{itemize}
+% \item Defintion 2:
+% \label{sec-1-1-2-7-1}
+% A graph $G = (\mathbf{X},E)$ consists of a set of nodes
+% $X$, depicted as dots, and a set of edges $E$ that connect the nodes, drawn as lines between pairs of nodes. Each edge $X–Y$ represents a pair of nodes from $\mathbf{X}$. In a directed graph, each edge is ordered and $X\rightarrow$ denotes an edge from X into Y.
+% \item Definition 3:
+% \label{sec-1-1-2-7-2}
+% A Bayesian network (3) is a representation of a joint probability distribution consisting of two components. The first component, G, is a directed acyclic graph (DAG) whose nodes correspond to the random variables $X_1, \ldots, X_n$. Let $Pa_i$ denote the parents of $X_i$ in G (all nodes coming into $X_i$). The second component, $q$, describes a conditional probability distribution $P(X|Pa_i)$ for each variable $X_i$ in $X$.
+% \item Definition 4:
+% \label{sec-1-1-2-7-3}
+% In a Bayesian network, the graph G encodes the Markov assumptions: Each variable $X_i$ is independent of its nondescendants, given its parents in G.
+% \end{itemize}
+% \end{itemize}
+
+\subsubsection*{Advantages of a graphical model:}
+\label{sec-1-1-3}
+\begin{itemize}
+\item The \textbf{Chain Rule}
+\label{sec-1-1-3-1}
+\begin{itemize}
+\item In its basic form:
+\label{sec-1-1-3-1-1}
+$$P(A,B) = P(B|A)P(A)$$
+\item Which generalizes as:
+\label{sec-1-1-3-1-2}
+$$P(A_1,A_2,\ldots,A_k)=P(A_1)P(A_2|A_1)\ldots P(A_k|A_{k-1})$$
+\item This result holds regardless of the ordering.
+\label{sec-1-1-3-1-3}
+\end{itemize}
+\item A graph makes clear a simpler factorization than the chain rule:
+\label{sec-1-1-3-2}
+$$P(\mathbf{X})=\prod_{i=1}^n P(X_i|Pa_i)$$
+\end{itemize}
+\subsubsection*{Review abstractly: Conditional independence and three 3-node graphs}
+\label{sec-1-1-4}
+\begin{itemize}
+\item Three example 3-node graphs (and how they behave when condtioning on $X_2$)
+\label{sec-1-1-4-1}
+\begin{itemize}
+\item The linear chain graph
+\label{sec-1-1-4-1-1}
+\item The "multiple offspring" graph
+\label{sec-1-1-4-1-2}
+\item The v-structure graph
+\label{sec-1-1-4-1-3}
+\begin{itemize}
+\item Definition 5:
+\label{sec-1-1-4-1-3-1}
+A v-structure (3) is an induced subgraph (a subset of nodes and all the edges between these nodes in G) of the form $X\rightarrow Y \leftarrow Z$ so that no edge exists between $X$ and
+$Z$.
+\end{itemize}
+\end{itemize}
+\item d-seperation
+\label{sec-1-1-4-2}
+\begin{itemize}
+\item Definition 6:
+\label{sec-1-1-4-2-1}
+Let $G$ be a Bayesian network structure and $X_{x-1}-...-X_n$ be a trail in $G$.
+Let $E$ be a subset of nodes from $X$. There is an active trail between $X_1$
+and $X_n$ given evidence $E$ if:
+\begin{itemize}
+\item Whenever we have a v-structure $X_{i-1}\rightarrow X_i \leftarrow X_{i+1}$, then $X_i$ or one of its descendants are in E.
+\label{sec-1-1-4-2-1-1}
+\item No other node along the trail is in E.
+\label{sec-1-1-4-2-1-2}
+Intuitively, this means that the dependence can ‘‘flow’’ through every triplet $X_{i-1}-X_i-X_{i+1}$.
+\end{itemize}
+\item Definition 7:
+\label{sec-1-1-4-2-2}
+\begin{itemize}
+\item Let X, Y, Z be three sets of nodes in G. We say that X and Z are d-separated given evidence Y, denoted $dsep_G (\mathbf{X};\mathbf{Z}|\mathbf{Y})$, if there is no active trail between any node X in $\mathbf{X}$ and Z in $\mathbf{Z}$ given evidence $Y$ (7).
+\label{sec-1-1-4-2-2-1}
+\item $dsep_G$ is a property of the graph structure $G$ that corresponds to the notion of conditional independence in the corresponding probability distribution $P$.
+\label{sec-1-1-4-2-2-2}
+\item $Ind(G)$ is defined as the set of independence statements (of the form ‘‘$X$ is independent of $Z$ given \$Y\$’’) that are implied by $G$.
+\label{sec-1-1-4-2-2-3}
+\item Using this formulation of d-separation, we can use an efficient graph algorithm whose running time scales linearly with the number of nodes in $G$ to check whether any such conditional independence statement holds.
+\label{sec-1-1-4-2-2-4}
+\end{itemize}
+\end{itemize}
+\item Equivalence classes
+\label{sec-1-1-4-3}
+\begin{itemize}
+\item Two graphs that imply the same set of conditional independences are in the same equivalence class.  One can use PDAGs to represent equivalence classes but this beyond our scope
+\label{sec-1-1-4-3-1}
+\end{itemize}
+\end{itemize}
+\subsubsection*{The elimination algorithm for helping query conditional probabilities on a graph}
+\label{sec-1-1-5}
+\begin{itemize}
+\item Returning to the example\ldots{} Suppose we want to query specific conditional probabilites (probability of grandparental genotype given child genotype?). How do we do so?  I will leave it as an exercise because I want to use an alternative graph.
+\label{sec-1-1-5-1}
+\item Draw the example from Jordan Chapter 3.
+\label{sec-1-1-5-2}
+\item Basic recipe:
+\label{sec-1-1-5-3}
+\begin{itemize}
+\item Write out sum over full joint distribution
+\label{sec-1-1-5-3-1}
+\item Move sums as far in as possible (represents the elimination ordering)
+\label{sec-1-1-5-3-2}
+\item Replace conditional probabilities in sum's with messages (e.g.$m(x_2)$) to be message passed from node $X_2$.
+\label{sec-1-1-5-3-3}
+\item Continue building messages until all nodes eliminated.
+\label{sec-1-1-5-3-4}
+\end{itemize}
+\item Example: Felsenstein Pruning algorithm (1981, JME)
+\label{sec-1-1-5-4}
+\begin{itemize}
+\item Tree with data at tips.  Compute probability of the data. Each message is pruning off of tips on the tree.
+\label{sec-1-1-5-4-1}
+\end{itemize}
+\end{itemize}
+
+\subsubsection*{Additional notation:}
+\label{sec-1-1-6}
+\begin{itemize}
+\item Plates for iid variables
+\label{sec-1-1-6-1}
+\item Examples:
+\label{sec-1-1-6-2}
+\begin{itemize}
+\item regression
+\item pedigree with multiple iid SNPs, add in a common mutation rate, add in observed genotpyes, add in common error rate for observations
+\end{itemize}
+\end{itemize}
+\subsubsection*{Web resources}
+\label{sec-1-1-7}
+\begin{itemize}
+\item Pe'er review: \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.159.7476&rep=rep1&type=pdf}
+\label{sec-1-1-7-1}
+\item Kollar video on elimination algorithm: \url{https://www.youtube.com/watch?v=jz02X3hByac}
+\label{sec-1-1-7-2}
+\item Relevant online course notes:
+\label{sec-1-1-7-3}
+\begin{itemize}
+\item \url{http://www.inf.ed.ac.uk/teaching/courses/pmr/slides/elim-2x2.pdf}
+\item \url{https://www.cs.cmu.edu/~aarti/Class/10701/readings/graphical_model_Jordan.pdf}
+\item \url{http://www.cs.columbia.edu/~blei/fogm/2015F/notes/inference.pdf}
+\item \url{http://www.cs.berkeley.edu/~jordan/courses/281A-fall04/}
+\end{itemize}
+\item For drawing graphical models
+\label{sec-1-1-7-4}
+\begin{itemize}
+\item \url{https://github.com/jluttine/tikz-bayesnet}
+\end{itemize}
+\end{itemize}
+% Emacs 24.5.1 (Org mode 8.2.10)
+\end{document}
