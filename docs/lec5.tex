@@ -1,30 +1,33 @@
-\documentclass[12pt]{article}
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
 \def \baselinestretch{1.2}
 \def\ni{\noindent}
 \def\Be{\text{Be}}
 
 \usepackage{amsmath,url,enumerate,graphicx}
 
-\textwidth=17.0cm
-\oddsidemargin 3cm
-\evensidemargin 3cm
-
-\topmargin=-1.2cm
-\columnsep=1.0cm
-\textheight=21.8cm
-\hoffset=-3.2cm
-\renewcommand{\baselinestretch}{1.2}
-\setlength{\parindent}{0.3in}
-\setlength{\parskip}{0.1in}
-
 \usepackage{chngcntr}
 \counterwithout{table}{section}
-%\setcounter{secnumdepth}{1}
-
-
-%\setcounter{section}{1}
-
 \begin{document}
+
+\scribe{Alan Hutchison}		% required
+\lecturenumber{5}			% required, must be a number
+\lecturedate{January 19}		% required, omit year
+\lecturer{Matthew Stephens} 
+
+\maketitle
+
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+
+
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
+
 
 
 
@@ -151,7 +154,7 @@ P(q|D) \propto q^{40} (1-q)^{60} * p(q) =  q^{40} (1-q)^{60} q^{\alpha-1} (1-q)^
 Here we can see exactly how the choice of the prior distribution parameters $\alpha$ and $\beta$ can include the resulting posterior distribution. Figure \ref{fig:2015-01-19_beta} shows the Beta distribution for a variety of $\alpha,\beta$ combinations.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{figures/Betas.pdf}
+\includegraphics[width=\textwidth]{Betas.pdf}
 \label{fig:2015-01-19_beta}
 \caption{Beta distributions for different $\alpha$ and $\beta$ values. Black refers to the density, red to the distribution function, and green the quantile function.}
 \end{figure}
@@ -240,6 +243,6 @@ The inverse of the variance $\frac{1}{\sigma^2}$ is referred to as the precision
 This means that the product of our posterior mean and our posterior precision is the sum of the product of our prior mean and prior precision with product of our observed $x$ and observed precision.
 
 
-
-
 \end{document}
+
+
