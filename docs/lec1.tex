@@ -1,41 +1,24 @@
-% Created 2016-01-10 Sun 14:51
-\documentclass[10pt,containsverbatim,paralist]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{fixltx2e}
-\usepackage{graphicx}
-\usepackage{longtable}
-\usepackage{float}
-\usepackage{wrapfig}
-\usepackage{rotating}
-\usepackage[normalem]{ulem}
-\usepackage{amsmath}
-\usepackage{textcomp}
-\usepackage{marvosym}
-\usepackage{wasysym}
-\usepackage{amssymb}
-\usepackage{hyperref}
-\tolerance=1000
-\usepackage{amsmath}
-\usepackage{pdfpages}
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{epstopdf}
-\usepackage{listings}
-\usepackage{hyperref}
-\usepackage{xmpmulti}
-\newcommand{\urlwofont}[1]{\burlstyle{same}\url{#1}}
-\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname 1`/`basename #1 .tif`.png}
-\usepackage{geometry}
-\geometry{textwidth=6.5in,textheight=9in,marginparsep=7pt,marginparwidth=0.6in}
-\setcounter{secnumdepth}{2}
-\date{\today}
-\title{}
-\hypersetup{
-  pdfkeywords={},
-  pdfsubject={},
-  pdfcreator={Emacs 24.5.1 (Org mode 8.2.10)}}
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
 \begin{document}
+
+\scribe{(None)}		% required
+\lecturenumber{1}			% required, must be a number
+\lecturedate{January 5}		% required, omit year
+\lecturer{John Novembre} 
+
+\maketitle
+
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+
+
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
 
 
 \section{HG48600/STAT34550 Lectures}
@@ -476,5 +459,6 @@ $$P(A_1,A_2,\ldots,A_k)=P(A_1)P(A_2|A_1)\ldots P(A_k|A_{k-1})$$
 \label{sec-1-1-9-3-3}
 \end{itemize}
 \end{itemize}
-% Emacs 24.5.1 (Org mode 8.2.10)
+
 \end{document}
+
