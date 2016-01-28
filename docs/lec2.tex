@@ -20,6 +20,7 @@ proofread.  }}
 \setlength{\parindent}{0cm}
 
 
+
 % ----------------------------------------------------------------------
 \section{Graphical Models: Introduction}
 Quite often, we are confronted with the task of understanding a complex system
@@ -159,7 +160,7 @@ distributed, so that:
 X_i|p &\sim \text{Bin}(2,p) \\
 p(X_i=2|p) &= p^2 \\
 p(X_i=1|p) &= 2p(1-p) \\
-p(X_i=0)|p) &= (1-p)^2
+p(X_i=0|p) &= (1-p)^2
 \end{align*}
 In this context, we represent inheritance in a 3-generation
 pedigree with the following graphical model. In what follows, we're
@@ -195,13 +196,35 @@ assuming $X_8 = p$.
 Assume $X_8$ is observed and that we are interested in
 $p(X_5|X_1,X_2)$. We could represent this conditional probability as a
 table, enumerating all possibly quantities that $X_1,X_2$ and $X_5$
-take. 
+take. In general, we can represent $P(X_i | X_j,X_k)$ where $X_i$ is
+the child of $X_j$ and $X_k$ using the basic laws of Mendelism:
+\begin{center}
+\begin{tabular}{|c c|c c c|}
+\hline
+Father & Mother & \multicolumn{3}{c|}{Child ($X_i$)} \\
+$X_j$ & $X_k$ &           0 &           1 &           2 \\
+\hline
+0     & 0     &           1 &           0 &           0 \\
+0     & 1     & $\frac{1}{2}$ & $\frac{1}{2}$ &           0 \\
+0     & 2     &           0 &           1 &           0 \\
+1     & 0     & $\frac{1}{2}$ & $\frac{1}{2}$ &           0 \\
+1     & 1     & $\frac{1}{4}$ & $\frac{1}{2}$ & $\frac{1}{4}$ \\
+1     & 2     &           0 & $\frac{1}{2}$ & $\frac{1}{2}$ \\
+2     & 0     &           0 &           1 &           0 \\
+2     & 1     &           0 & $\frac{1}{2}$ & $\frac{1}{2}$ \\
+2     & 2     &           0 &           0 &           1 \\
+\hline
+\end{tabular}
+\end{center}
 
 From the graphical model above, and using equation~\ref{eq:gm_prob},
-we can factorize the joint distribution in the following way:
+we can factorize the joint distribution in the following way, in which
+the values of the table above can be used to compute the joint distribution:
 \begin{align*}
 p(X_1,\ldots,X_8) = p(X_1|X_8)p(X_2|X_8)p(X_3|X_8)p(X_4|X_8)\times \\p(X_5|X_1,X_2)p(X_6|X_3,X_4)p(X_7|X_5,X_6)p(X_8)
 \end{align*}
+
+
 
 \subsection{Some classes of 3-node graphs}
 
@@ -219,7 +242,6 @@ With the linear chain graph, we have that $X_1 \perp X_3 | X_2$:
   \edge {x2} {x3} ; %
 \end{tikzpicture}
 \end{center}
-
 
 As we saw in a previous section, in this multiple offspring graph, we
 have that $X_1 \perp~ X_3 | X_2$:
@@ -250,7 +272,7 @@ The v-structure graph has the following structure:
   \edge {x3} {x2} ; %
 \end{tikzpicture}
 \end{center}
-It is \emph{not true} that $X_1 \perp X_3 | X_2$. For example, assume
+In this case, it is \emph{not true} that $X_1 \perp X_3 | X_2$. For example, assume
 $X_2$ was the event that your house alarm was going off, $X_1$ was the
 event that there was an earthquake, and $X_3$ was the event that there
 was a burglar in your house. Assuming your alarm was going off, the
@@ -355,6 +377,20 @@ This exercise gives rise to a general algorithm for computing marginal
 probabilities. To see the details of this algorithm, refer to the
 handout given in class entitled \emph{The Elimination Algorithm}.
 
+In statistical genetics, Felsenstein's tree-pruning algorithm (1981, JME) computes
+the likelihood of an evolutionary tree from nucleic acid sequence
+data. This pruning algorithm was an early instance of the elimination
+algorithm. As a simplified illustration, we can represent a phylogeny
+as a tree in which the leaves correspond to the \emph{observed} values
+of a site across different species. The non-leaves are values of the site
+for the ancestors. Each edge of the tree can represent the
+\emph{evolutionary distance} to be estimated which can be encoded as the
+conditional probability of a state given its ancestral state. Using
+Felsenstein's pruning algorithm, we can obtain the joint probability
+across all sites. This can be used in conjunction with the EM
+algorithm to find the maximum likelihood tree. 
+
+\\
 Relevant online course notes:
 \begin{itemize}
 \item \url{http://www.inf.ed.ac.uk/teaching/courses/pmr/slides/elim-2x2.pdf}
