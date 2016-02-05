@@ -14,7 +14,9 @@ title: "Home"
 *   [Lecture 4](../docs/lec4.pdf)
 *   [Lecture 5](../docs/lec5.pdf)
 
+## fiveMinuteStats
 
+A collection of short vignettes describing fundamental ideas from lecture live [here](http://stephens999.github.io/fiveMinuteStats/analysis/). 
 
 ## Sebastian Pott Data
 
