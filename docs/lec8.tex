@@ -1,0 +1,127 @@
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
+\usepackage{amsmath}
+\begin{document}
+
+\scribe{Frank Wen}		% required
+\lecturenumber{9}			% required, must be a number
+\lecturedate{February 2}		% required, omit year
+\lecturer{John Novembre} 
+
+\maketitle
+
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+
+
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
+
+
+\section{Continuous time processes (the exponential distribution)}
+The exponential distribution often appears as the distribution of waiting times until an event (i.e. arrival times). 
+
+\begin{align*}
+f(x) = \lambda e^{-\lambda x}
+\end{align*}
+
+Let $T$ be a random variable representing the waiting time until an event happens. Then for $T\sim exp(\lambda)$ with expected value $E(T) = \frac{1}{\lambda}$. The cumulative distribution function is given by
+
+\begin{align*}
+F(X) = P(T\le X) &= 1-e^{-\lambda x}\\
+P(T > X) &= e^{-\lambda x}
+\end{align*}
+
+An important property of the exponential distribution is that it is \textit{memoryless}. Suppose that $T$ is the waiting time until an event occurs. Then, for any given waiting times $t$ and $s$,
+
+\begin{align*}
+P(T > t+s | T>t ) &= P(T>s)
+\end{align*}
+
+This is to say that if we have already waited $t$ minutes for an event to occur, then the remaining time $s$ for the event to occur is the same as if we hadn't waited the first $t$ minutes to begin with. To show this, we use our definition of conditional probability:
+\begin{align*}
+P(T > t+s | T>t ) &= \frac{P(T > t+s , T>t )}{P(T>t)}
+\end{align*}
+Since we have already waited $t$ minutes, $P(T > t+s , T>t ) = P(T > t+s)$. So,
+\begin{align*}
+P(T > t+s | T>t ) &= \frac{P(T > t+s )}{P(T>t)}\\
+&= \frac{e^{-\lambda(t+s)}}{ e^{-\lambda t} }\\
+&= e^{-\lambda s} = P(T>s)
+\end{align*}
+\section{Discrete time processes (the geometric distribution)}
+
+The geometric distribution can be thought of as the discrete analog of the exponential distribution. It is the the probability distribution of $X$ number of Bernoulli trials with success probability $p$ before one success is obtained.
+
+\begin{equation*}
+Geom(p) = P(X= k) = (1-p)^{k-1}p
+\end{equation*}
+
+Because the trials are independent, the geometric distribution is also memoryless.
+
+
+\section{Poisson processes}
+\subsection{Counting process and the poisson distribution}
+A poisson process can be defined as a counting process, where we are interested in the number of events (arrivals) that have occurred up until some time $N(t)$. Four properties of this counting process are the following\\
+1) $N(0) = 0$\\
+2) $N(t), t\ge0$ has independent increments, or what happens in one time interval is independent of what happens in any other interval\\
+3) $P(N(t_0+t) - N(t_0) \ge2) = o(t) $ as $t\rightarrow0$\\
+As the time between events gets smaller, the probability of observing two or more events in that time step goes to zero. In other words, events do not happen simultaneously.\\
+4) $P(N(t_0+t) - N(t_0) =1 ) = \lambda t + o(t) $ as $t\rightarrow0$ \\
+i.e. the number of events in an interval of length $t$ is Poisson distributed with rate $\lambda t$. We write this as
+\begin{equation*}
+P(N(t) = k) = \frac{(\lambda t)^k e^{-\lambda t} }{k!}
+\end{equation*}
+
+Here, $f(x) = o((g(x))$ means that $|f(x)| \le k|g(x)| $ for all $k$. Intuitively this means that $g(x)$ grows faster than $f(x)$
+
+\subsection{Relationship to the binomial distribution}
+The poisson distribution can be derived as the limit of a binomial distribution as the number of trials $n$ goes ti infinity, and the probability of success $p$ goes to zero, such that $np = \lambda$. To show this, we take an interval $(s, s+t]$ and divide it into $n$ intervals of size $t/n$. The number of events in the $i$th interval is given by $N_i$. Since events do not happen simultaneously,
+\begin{align*}
+P(N_i\ge2) = o(t/n),  t\rightarrow0
+\end{align*}
+This is the equivalent of saying that $N_i \sim Bernoulli(p)$, where $p = \lambda(t/n) + o(t/n)$.\\\\
+The total number of events in the interval is then Binomially distributed
+\begin{align*}
+ N(t+s) - N(s) \sim Binom(n,p) = Binom(n, \lambda t/n)
+\end{align*}
+ So, as $n$ approaches infinity, $np$ approaches $\lambda t$, and $N(t+s) - N(s) ~ Pois(\lambda t)$.
+
+\subsection{Inter-arrival times}
+Waiting times between events (inter-arrival times) in a poisson process are exponentially distributed. To show this, we consider the waiting times between the first and second arrival $T_1$ and $T_2$ respectively.
+\begin{align*}
+P(T_1 > t) &= P(N(t) = 0)\\
+&= \frac{(\lambda t)^0 e^{-\lambda t}}{0!} = e^{-\lambda t}
+\end{align*}
+So the waiting time until the first arrival is exponentially distributed. For the second arrival event, given the first arrival occurred at time $s$, the waiting time is
+\begin{align*}
+P(T_2 > t) &= \int_s P(T_2 > t | T_1 = s) P(T_1 = s)\\
+&= \int_s P(0 \text{ events in }(s, s+t] | T_1 = s) P(T_1 = s) 
+\end{align*}
+By independence,
+\begin{align*}
+&=\int_s  P(0 \text{ events in } (s, s+t] ) P(T_1 = s) \\
+&= e^{-\lambda t}\int_s P(T_1 = s) \\
+&= e^{-\lambda t}
+\end{align*}
+By the same logic, the inter-arrival time (waiting time in between events) for any $i$th interval is also exponentially distributed $T_i \sim exp(\lambda)$. Then, the waiting time until the $n$th arrival is the sum of all $i$ events $S_n = \sum_{i=1}^n T_i$. Since the inter-arrival times are exponentially distributed, the $n$th arrival time is gamma distributed $S_n \sim Gamma(\lambda, n)$
+
+If we know the number of events in some given interval $(0,t]$, then the distribution of inter-arrival times conditioned on the number of events is uniformly distributed on $(0,t]$. We show this for the simple case with one event.
+\begin{align*}
+P(T_1 > s | N(t) = 1) &= \frac{P(T_1 > s , N(t) = 1)}{P(N(t) = 1)}\\
+&=P(0 \text{ events in } (0,s], 1 \text{ event in } (s, t] )\\
+&= \frac{e^{-\lambda s} \lambda (t-s) e^{-\lambda(t-s)} }{\lambda t e^{-t}}\\
+&= \frac{t-s}{t}
+\end{align*}
+To get to the uniform distribution, 
+\begin{align*}
+P(T_1 \le s | N(t) = 1) &= 1- P(T_1 > s |N(t) =1)\\
+&=\frac{s}{t}
+\end{align*}
+
+
+\end{document}
+
