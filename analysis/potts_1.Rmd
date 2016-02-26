@@ -1,5 +1,5 @@
 ---
-title: "Intro to Potts Data"
+title: "Intro to Pott Data"
 author: "Matthew Stephens"
 date: 2016-01-22
 ---

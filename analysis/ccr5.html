@@ -8,9 +8,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
+<meta name="author" content="Matthew Stephens" />
 
+<meta name="date" content="2016-02-25" />
 
-<title>Home</title>
+<title>quick look at CCR5 data</title>
 
 <script src="libs/jquery-1.11.0/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -117,40 +119,74 @@ img {
 </div><!--/.navbar -->
 
 <div id="header">
-<h1 class="title">Home</h1>
+<h1 class="title">quick look at CCR5 data</h1>
+<h4 class="author"><em>Matthew Stephens</em></h4>
+<h4 class="date"><em>2016-02-25</em></h4>
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#lecture-notes">Lecture Notes</a></li>
-<li><a href="#sebastian-pott-data">Sebastian Pott Data</a></li>
-<li><a href="#ccr5-data">CCR5 data</a></li>
+<li><a href="#load-data">Load Data</a></li>
+<li><a href="#compute-pairwise-distances">Compute pairwise distances</a></li>
+<li><a href="#deal-with-0-counts">Deal with 0 counts</a></li>
+<li><a href="#similarity-of-allele-frequency-with-distance">Similarity of allele frequency with distance?</a><ul>
+<li><a href="#session-information">Session information</a></li>
+</ul></li>
 </ul>
 </div>
 
 <p><strong>Last updated:</strong> 2016-02-26</p>
 <p><strong>Code version:</strong> 7bd65130f1e7e53db60e9c0f2f6b42812901bf4b</p>
-<div id="lecture-notes" class="section level2">
-<h2>Lecture Notes</h2>
-<ul>
-<li><a href="../docs/lec1.pdf">Lecture 1</a></li>
-<li><a href="../docs/lec2.pdf">Lecture 2</a></li>
-<li><a href="../docs/lec3.pdf">Lecture 3</a></li>
-<li><a href="../docs/lec4.pdf">Lecture 4</a></li>
-<li><a href="../docs/lec5.pdf">Lecture 5</a></li>
-</ul>
+<div id="load-data" class="section level2">
+<h2>Load Data</h2>
+<p>The following reads in the data, and converts longitudes &gt;180 to corresponding negative longitudes (this avoids warnings in geosphere package later)</p>
+<pre class="r"><code>ccr5 = read.table(&quot;../data/CCR5/CCR5.freq.txt&quot;,header=TRUE)
+ccr5[,1] = ifelse(ccr5[,1]&gt;180,ccr5[,1]-360,ccr5[,1]) # changes longitudes&gt;180 to negative</code></pre>
 </div>
-<div id="sebastian-pott-data" class="section level2">
-<h2>Sebastian Pott Data</h2>
-<ul>
-<li><a href="potts_1.html">Simple Markov Exercise</a></li>
-</ul>
+<div id="compute-pairwise-distances" class="section level1">
+<h1>Compute pairwise distances</h1>
+<p>This can be done using the geosphere package. Dividing by 1000 gives distance in km.</p>
+<pre class="r"><code>geo.dist = geosphere::distm(ccr5[,1:2])/1000
+hist(geo.dist)</code></pre>
+<p><img src="figure/ccr5.Rmd/unnamed-chunk-2-1.png" title="" alt="" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="ccr5-data" class="section level2">
-<h2>CCR5 data</h2>
-<ul>
-<li><a href="ccr5.html">Some basic calculations with the data</a></li>
-</ul>
+<div id="deal-with-0-counts" class="section level1">
+<h1>Deal with 0 counts</h1>
+<p>Some of the frequency estimates are 0. I deal with this by first working out the original counts (frequency * samplesize *2), and then adding a pseudocount to each allele before recomputing frequencies. The resulting column “fhat” can be transformed by log(fhat/(1-fhat)) to be something that is not entirely non-normal…</p>
+<pre class="r"><code>ccr5$count = round(ccr5$Freq* ccr5$SampleSize * 2)
+ccr5$fhat = (ccr5$count+1)/(ccr5$SampleSize*2+2)
+ccr5$Z = log(ccr5$fhat/(1-ccr5$fhat))
+hist(ccr5$Z)</code></pre>
+<p><img src="figure/ccr5.Rmd/unnamed-chunk-3-1.png" title="" alt="" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="similarity-of-allele-frequency-with-distance" class="section level1">
+<h1>Similarity of allele frequency with distance?</h1>
+<p>Here we take a quick look to check that Z has some kind of spatial trend.</p>
+<pre class="r"><code>plot(x=ccr5$Lat,y=ccr5$Long,type=&quot;n&quot;)
+text(round(ccr5$Z),x=ccr5$Lat,y=ccr5$Long)</code></pre>
+<p><img src="figure/ccr5.Rmd/unnamed-chunk-4-1.png" title="" alt="" width="672" style="display: block; margin: auto;" /></p>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.2.3 (2015-12-10)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.11.2 (El Capitan)
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] knitr_1.12.3
+
+loaded via a namespace (and not attached):
+ [1] magrittr_1.5    formatR_1.2.1   tools_3.2.3     htmltools_0.3  
+ [5] sp_1.2-2        yaml_2.1.13     geosphere_1.5-1 stringi_1.0-1  
+ [9] rmarkdown_0.9.2 grid_3.2.3      stringr_1.0.0   digest_0.6.9   
+[13] lattice_0.20-33 evaluate_0.8   </code></pre>
+</div>
 </div>
 
 
