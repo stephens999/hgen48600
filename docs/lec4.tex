@@ -1,14 +1,26 @@
-\documentclass[10pt,a4paper]{article}
-\usepackage[latin1]{inputenc}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{graphicx}
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
 \usepackage{bbm}
-\parskip = 12pt
-\title{HGEN486 Notes, 1/14/2015}
+
 \begin{document}
-\maketitle 
+
+\scribe{Justin Hsu}		% required
+\lecturenumber{4}			% required, must be a number
+\lecturedate{January 14}		% required, omit year
+\lecturer{Matthew Stephens} 
+
+\maketitle
+
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+
+
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
 \section{Likelihood Analysis}
 Consider the set of data of 100 tusks, 40 of which have the "1" allele, 60 with the "0" allele
 Then the data has the likelihood function \begin{equation} L(q) = P(Data|M_q)\end{equation}. We can write this as \begin{equation} L(q) = q^{40}(1-q)^{60}\end{equation}
@@ -148,4 +160,6 @@ If we take the expectation of the sum of indicator functions, we find the probab
 \begin{equation}
 \frac{\sum_i E(\mathbbm{1}(Z_i=S)|X,\theta)}{\sum_i E(...) = n}
 \end{equation}
+
 \end{document}
+

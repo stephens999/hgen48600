@@ -1,230 +1,406 @@
-% Created 2016-01-10 Sun 15:19
-\documentclass[10pt,containsverbatim,paralist]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{fixltx2e}
-\usepackage{graphicx}
-\usepackage{longtable}
-\usepackage{float}
-\usepackage{wrapfig}
-\usepackage{rotating}
-\usepackage[normalem]{ulem}
-\usepackage{amsmath}
-\usepackage{textcomp}
-\usepackage{marvosym}
-\usepackage{wasysym}
-\usepackage{amssymb}
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
+\usepackage{tikz}
+\usetikzlibrary{bayesnet}
 \usepackage{hyperref}
-\tolerance=1000
-\usepackage{amsmath}
-\usepackage{pdfpages}
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{epstopdf}
-\usepackage{listings}
-\usepackage{hyperref}
-\usepackage{xmpmulti}
-\newcommand{\urlwofont}[1]{\burlstyle{same}\url{#1}}
-\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname 1`/`basename #1 .tif`.png}
-\usepackage{geometry}
-\geometry{textwidth=6.5in,textheight=9in,marginparsep=7pt,marginparwidth=0.6in}
-\setcounter{secnumdepth}{2}
-\date{\today}
-\title{}
-\hypersetup{
-  pdfkeywords={},
-  pdfsubject={},
-  pdfcreator={Emacs 24.5.1 (Org mode 8.2.10)}}
 \begin{document}
 
+\lecturer{John Novembre}		% optional
+\scribe{Matt Bonakdarpour}		% required
+\lecturenumber{2}			% required, must be a number
+\lecturedate{January 7}		        % required, omit year
 
-\section{HG48600/STAT34550 Lectures}
-\label{sec-1}
-\subsection{Lecture: Graphical models: Introduction}
-\label{sec-1-1}
-\subsubsection*{Graphical models introduction}
-\label{sec-1-1-1}
+\maketitle
+
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+\setlength{\parindent}{0cm}
+
+
+
+% ----------------------------------------------------------------------
+\section{Graphical Models: Introduction}
+Quite often, we are confronted with the task of understanding a complex system
+with many dependent components. In this context, probability theory
+gives us a framework to reason about a collection of possible outcomes
+and their associated likelihoods. For example, if we are trying to
+diagnose a patient, there are many potential diseases this patient
+could have. Also, associated with each patient, we may have hundreds
+of data points related to their symptoms, personal traits, and
+diagnostic tests. Each of these characteristics could be thought of as
+a random variable. Our goal is to reason about this patient given the
+values of one or more of these random variables. In the framework of
+probabilistic reasoning, we need to construct a joint distribution
+over the space of possible assignments to this set of random
+variables. 
+
+If we have five realizations of \emph{binary} random variables for a patient, we must specify a joint
+distribution over $2^5$ possible values -- a potentially daunting task! Graphical models provide a
+framework to compactly encode a joint distribution in high
+dimensions. They also provide other benefits, including but not
+limited to:
 \begin{itemize}
 \item A tool for visualizing the structure of a probabilistic model
 \item Provides insights, such as conditional independence properties, by inspection of the graph
 \item Complex computations can be expressed as operations on the graph
-\item Graphical models - also sometimes called Bayesian networks
 \end{itemize}
 
-% \subsubsection*{A motivating example:}
-% \label{sec-1-1-2}
-% \begin{itemize}
-% \item Inheritance in a 3-generation pedigree
-% \label{sec-1-1-2-1}
-% \item Introduce shaded notation for conditioning
-% \label{sec-1-1-2-2}
-% \item Introduce idea of generative model - each edge represents a conditional probablity of "child | parents"
-% \label{sec-1-1-2-3}
-% \item Introduce idea of querying to get non-obvious relationships:
-% \label{sec-1-1-2-4}
-% \begin{itemize}
-% \item P(Paternal grandfather | child genotype)
-% \label{sec-1-1-2-4-1}
-% \end{itemize}
-% \item Introduce notion of "blocking" (d-seperation) and "information flow" through v-structures.
-% \label{sec-1-1-2-5}
-% \item Define conditional independence (maternal grandparent and proband indpt given maternal parent genotype)
-% \label{sec-1-1-2-6}
-% \begin{itemize}
-% \item Definition 1:
-% \label{sec-1-1-2-6-1}
-% X is conditionally independent of Z given Y if the probability distribution of X conditioned on both Y and Z is the same as the probability distribution of X conditioned only on Y:
-% $$P(X|Y,Z)=P(X|Y)$$
-% We represent this statement as $(X \perp Z |Y)$.
-% \end{itemize}
-% \item More formally establishing a graph and a Bayesian network:
-% \label{sec-1-1-2-7}
-% \begin{itemize}
-% \item Defintion 2:
-% \label{sec-1-1-2-7-1}
-% A graph $G = (\mathbf{X},E)$ consists of a set of nodes
-% $X$, depicted as dots, and a set of edges $E$ that connect the nodes, drawn as lines between pairs of nodes. Each edge $X–Y$ represents a pair of nodes from $\mathbf{X}$. In a directed graph, each edge is ordered and $X\rightarrow$ denotes an edge from X into Y.
-% \item Definition 3:
-% \label{sec-1-1-2-7-2}
-% A Bayesian network (3) is a representation of a joint probability distribution consisting of two components. The first component, G, is a directed acyclic graph (DAG) whose nodes correspond to the random variables $X_1, \ldots, X_n$. Let $Pa_i$ denote the parents of $X_i$ in G (all nodes coming into $X_i$). The second component, $q$, describes a conditional probability distribution $P(X|Pa_i)$ for each variable $X_i$ in $X$.
-% \item Definition 4:
-% \label{sec-1-1-2-7-3}
-% In a Bayesian network, the graph G encodes the Markov assumptions: Each variable $X_i$ is independent of its nondescendants, given its parents in G.
-% \end{itemize}
-% \end{itemize}
+In this lecture, we will consider directed graphical models, sometimes
+known as Bayesian networks. 
 
-\subsubsection*{Advantages of a graphical model:}
-\label{sec-1-1-3}
+\subsection{Joint probabilities and independence}
+Using the definition of conditional probability, we have that the
+joint distribution between $X_i$ and $X_j$ is:
+\begin{align*}
+p(X_i,X_j) = P(X_i | X_j)P(X_j)
+\end{align*}
+
+In general, if we have any $n$ random variables $X_1,\ldots,X_n$, we can
+use the \emph{chain rule} to factor the joint distribution as follows:
+\begin{align*}
+p(X_1,\ldots,X_n) = p(X_1)p(X_2|X_1)p(X_3|X_1,X_2)\cdots
+p(X_n|X_1,\ldots ,X_{n-1})
+\end{align*}
+
+Recall that $X_i$ is independent of $X_j$ if knowledge of $X_j$ does
+not change our knowledge of $X_i$. That is, $p(X_i | X_j) =
+p(X_i)$. Plugging this in to the expression for the joint distribution
+above, we have that $X_i$ is independent of $X_j$ if and only if
+$p(X_i,X_j)=p(X_i)p(X_j)$.
+
+We say that $X_i$ is \emph{conditionally independent} of $X_j$ given
+$X_k$ if
+\begin{align*}
+p(X_i,X_j|X_k) = p(X_i|X_k)p(X_j|X_k)
+\end{align*}
+which means
+\begin{align*}
+p(X_i,X_j,X_k) = p(X_i|X_k)p(X_j|X_k)p(X_k)
+\end{align*}
+
+Notice how the joint distribution factorizes nicely when we have
+conditional independence. Idea: when faced with a large number of
+features, use our prior knowledge of independence to simplify the
+joint distribution. 
+
+\subsection{Some basics}
+A directed graph is a set of vertices (or nodes) along with a set of
+directed edges (or arrows) between nodes. Here is a simple graph with
+two vertices and one directed edge:
+
+\begin{center}
+\begin{tikzpicture}
+
+  % Define nodes
+  \node[latent]                             (x1) {$X_1$};
+  \node[latent,right=of x1]                 (x2) {$X_2$};
+
+  \edge {x1} {x2} ; %
+\end{tikzpicture}
+\end{center}
+
+Here, each vertex represents a random variable. When a specific random
+variable in the graph is observed, we shade that particular
+vertex. For example, this is what the graph above would look like if
+we observed $X_1$, but $X_2$ was still latent:
+
+\begin{center}
+\begin{tikzpicture}
+
+  % Define nodes
+  \node[obs]                             (x1) {$X_1$};
+  \node[latent,right=of x1]                 (x2) {$X_2$};
+
+  \edge {x1} {x2} ; %
+\end{tikzpicture}
+\end{center}
+
+A directed graphical model encodes conditional independence in the
+following way. A specific random variable (or vertex) is conditionally
+independent of all other nodes, given its parents (i.e. all nodes that
+points to it). For example, in the following graph $X_1$ is
+independent of $X_3$ given $X_2$:
+
+\begin{center}
+\begin{tikzpicture}
+
+  % Define nodes
+  \node[obs]                                (x2) {$X_2$};
+  \node[latent,below left=of x2]                 (x1) {$X_1$};
+  \node[latent,below right=of x2, right=of x1]                 (x3) {$X_3$};
+
+  \edge {x2} {x1} ; %
+  \edge {x2} {x3} ; %
+\end{tikzpicture}
+\end{center}
+The general form for the joint distribution for a directed graphical
+model is therefore:
+\begin{align}
+p(X_1,\ldots,X_n) = \prod_{i=1}^n p(X_i |\text{pa}_i) \label{eq:gm_prob}
+\end{align}
+where $\text{pa}_i$ denotes the parents of $X_i$.
+\subsection{A motivating example}
+Assume we have 3 possible genotypes $\{$AA,Aa,aa$\}$. To each person, we will assign a
+random variable $X_i$ according to their genotype:
+\begin{center}
+\begin{tabular}{l|l }
+  Genotype & $X_i$ \\
+  \hline
+  AA & 0 \\
+  Aa & 1 \\
+  aa & 2 
+\end{tabular}
+\end{center}
+Let's also assume that the genotype of each person is binomially
+distributed, so that:
+\begin{align*}
+X_i|p &\sim \text{Bin}(2,p) \\
+p(X_i=2|p) &= p^2 \\
+p(X_i=1|p) &= 2p(1-p) \\
+p(X_i=0|p) &= (1-p)^2
+\end{align*}
+In this context, we represent inheritance in a 3-generation
+pedigree with the following graphical model. In what follows, we're
+assuming $X_8 = p$.
+
+\begin{center}
+\begin{tikzpicture}
+
+  % Define nodes
+  \node[obs]                               (x8) {$X_8$};
+  \node[latent,below left=of x8, right of=x1]                 (x2)
+  {$X_2$};
+  \node[latent,below left =of x8, left=of x2]                 (x1) {$X_1$};
+  \node[latent,below right=of x8, right=of x2]                 (x3) {$X_3$};
+  \node[latent,below right=of x8, right=of x3]                 (x4)
+  {$X_4$};
+
+  \node[latent,below right=of x1, below left=of x2]                 (x5) {$X_5$};
+  \node[latent,below right=of x3, below left=of x4]                 (x6)
+  {$X_6$};
+
+  \node[latent,below right=of x5, below left=of x6]                 (x7) {$X_7$};
+
+
+  % Connect the nodes
+  \edge {x8} {x1,x2,x3,x4} ; %
+  \edge {x1,x2} {x5} ; %
+  \edge {x3,x4} {x6} ; %
+  \edge {x5,x6} {x7} ; %
+\end{tikzpicture}
+\end{center}
+
+Assume $X_8$ is observed and that we are interested in
+$p(X_5|X_1,X_2)$. We could represent this conditional probability as a
+table, enumerating all possibly quantities that $X_1,X_2$ and $X_5$
+take. In general, we can represent $P(X_i | X_j,X_k)$ where $X_i$ is
+the child of $X_j$ and $X_k$ using the basic laws of Mendelism:
+\begin{center}
+\begin{tabular}{|c c|c c c|}
+\hline
+Father & Mother & \multicolumn{3}{c|}{Child ($X_i$)} \\
+$X_j$ & $X_k$ &           0 &           1 &           2 \\
+\hline
+0     & 0     &           1 &           0 &           0 \\
+0     & 1     & $\frac{1}{2}$ & $\frac{1}{2}$ &           0 \\
+0     & 2     &           0 &           1 &           0 \\
+1     & 0     & $\frac{1}{2}$ & $\frac{1}{2}$ &           0 \\
+1     & 1     & $\frac{1}{4}$ & $\frac{1}{2}$ & $\frac{1}{4}$ \\
+1     & 2     &           0 & $\frac{1}{2}$ & $\frac{1}{2}$ \\
+2     & 0     &           0 &           1 &           0 \\
+2     & 1     &           0 & $\frac{1}{2}$ & $\frac{1}{2}$ \\
+2     & 2     &           0 &           0 &           1 \\
+\hline
+\end{tabular}
+\end{center}
+
+From the graphical model above, and using equation~\ref{eq:gm_prob},
+we can factorize the joint distribution in the following way, in which
+the values of the table above can be used to compute the joint distribution:
+\begin{align*}
+p(X_1,\ldots,X_8) = p(X_1|X_8)p(X_2|X_8)p(X_3|X_8)p(X_4|X_8)\times \\p(X_5|X_1,X_2)p(X_6|X_3,X_4)p(X_7|X_5,X_6)p(X_8)
+\end{align*}
+
+
+
+\subsection{Some classes of 3-node graphs}
+
+With the linear chain graph, we have that $X_1 \perp X_3 | X_2$:
+
+\begin{center}
+\begin{tikzpicture}
+
+  % Define nodes
+  \node[obs]                                (x2) {$X_2$};
+  \node[latent,left=of x2]                 (x1) {$X_1$};
+  \node[latent,right=of x2]                 (x3) {$X_3$};
+
+  \edge {x1} {x2} ; %
+  \edge {x2} {x3} ; %
+\end{tikzpicture}
+\end{center}
+
+As we saw in a previous section, in this multiple offspring graph, we
+have that $X_1 \perp~ X_3 | X_2$:
+
+\begin{center}
+\begin{tikzpicture}
+
+  % Define nodes
+  \node[obs]                                (x2) {$X_2$};
+  \node[latent,below=of x2]                 (x1) {$X_1$};
+  \node[latent,right=of x1]                 (x3) {$X_3$};
+
+  \edge {x2} {x1} ; %
+  \edge {x2} {x3} ; %
+\end{tikzpicture}
+\end{center}
+
+The v-structure graph has the following structure:
+\begin{center}
+\begin{tikzpicture}
+
+  % Define nodes
+  \node[obs]                                (x2) {$X_2$};
+  \node[latent,above=of x2]                 (x1) {$X_1$};
+  \node[latent,right=of x1]                 (x3) {$X_3$};
+
+  \edge {x1} {x2} ; %
+  \edge {x3} {x2} ; %
+\end{tikzpicture}
+\end{center}
+In this case, it is \emph{not true} that $X_1 \perp X_3 | X_2$. For example, assume
+$X_2$ was the event that your house alarm was going off, $X_1$ was the
+event that there was an earthquake, and $X_3$ was the event that there
+was a burglar in your house. Assuming your alarm was going off, the
+additional information about whether a burglar was in your house would
+affect your knowledge of whether or not an earthquake was
+happening.
+
+\subsection{D-separation}
+Take any undirected path (ignoring arrows) in the graph $G$. This path
+is called an \emph{active trail} for observed variables $O \subset
+\{X_1,\ldots,X_n\}$, if for every consecutive triple of variables
+$X,Y,Z$ on the path:
 \begin{itemize}
-\item The \textbf{Chain Rule}
-\label{sec-1-1-3-1}
-\begin{itemize}
-\item In its basic form:
-\label{sec-1-1-3-1-1}
-$$P(A,B) = P(B|A)P(A)$$
-\item Which generalizes as:
-\label{sec-1-1-3-1-2}
-$$P(A_1,A_2,\ldots,A_k)=P(A_1)P(A_2|A_1)\ldots P(A_k|A_{k-1})$$
-\item This result holds regardless of the ordering.
-\label{sec-1-1-3-1-3}
-\end{itemize}
-\item A graph makes clear a simpler factorization than the chain rule:
-\label{sec-1-1-3-2}
-$$P(\mathbf{X})=\prod_{i=1}^n P(X_i|Pa_i)$$
-\end{itemize}
-\subsubsection*{Review abstractly: Conditional independence and three 3-node graphs}
-\label{sec-1-1-4}
-\begin{itemize}
-\item Three example 3-node graphs (and how they behave when condtioning on $X_2$)
-\label{sec-1-1-4-1}
-\begin{itemize}
-\item The linear chain graph
-\label{sec-1-1-4-1-1}
-\item The "multiple offspring" graph
-\label{sec-1-1-4-1-2}
-\item The v-structure graph
-\label{sec-1-1-4-1-3}
-\begin{itemize}
-\item Definition 5:
-\label{sec-1-1-4-1-3-1}
-A v-structure (3) is an induced subgraph (a subset of nodes and all the edges between these nodes in G) of the form $X\rightarrow Y \leftarrow Z$ so that no edge exists between $X$ and
-$Z$.
-\end{itemize}
-\end{itemize}
-\item d-seperation
-\label{sec-1-1-4-2}
-\begin{itemize}
-\item Definition 6:
-\label{sec-1-1-4-2-1}
-Let $G$ be a Bayesian network structure and $X_{x-1}-...-X_n$ be a trail in $G$.
-Let $E$ be a subset of nodes from $X$. There is an active trail between $X_1$
-and $X_n$ given evidence $E$ if:
-\begin{itemize}
-\item Whenever we have a v-structure $X_{i-1}\rightarrow X_i \leftarrow X_{i+1}$, then $X_i$ or one of its descendants are in E.
-\label{sec-1-1-4-2-1-1}
-\item No other node along the trail is in E.
-\label{sec-1-1-4-2-1-2}
-Intuitively, this means that the dependence can ‘‘flow’’ through every triplet $X_{i-1}-X_i-X_{i+1}$.
-\end{itemize}
-\item Definition 7:
-\label{sec-1-1-4-2-2}
-\begin{itemize}
-\item Let X, Y, Z be three sets of nodes in G. We say that X and Z are d-separated given evidence Y, denoted $dsep_G (\mathbf{X};\mathbf{Z}|\mathbf{Y})$, if there is no active trail between any node X in $\mathbf{X}$ and Z in $\mathbf{Z}$ given evidence $Y$ (7).
-\label{sec-1-1-4-2-2-1}
-\item $dsep_G$ is a property of the graph structure $G$ that corresponds to the notion of conditional independence in the corresponding probability distribution $P$.
-\label{sec-1-1-4-2-2-2}
-\item $Ind(G)$ is defined as the set of independence statements (of the form ‘‘$X$ is independent of $Z$ given \$Y\$’’) that are implied by $G$.
-\label{sec-1-1-4-2-2-3}
-\item Using this formulation of d-separation, we can use an efficient graph algorithm whose running time scales linearly with the number of nodes in $G$ to check whether any such conditional independence statement holds.
-\label{sec-1-1-4-2-2-4}
-\end{itemize}
-\end{itemize}
-\item Equivalence classes
-\label{sec-1-1-4-3}
-\begin{itemize}
-\item Two graphs that imply the same set of conditional independences are in the same equivalence class.  One can use PDAGs to represent equivalence classes but this beyond our scope
-\label{sec-1-1-4-3-1}
-\end{itemize}
-\end{itemize}
-\subsubsection*{The elimination algorithm for helping query conditional probabilities on a graph}
-\label{sec-1-1-5}
-\begin{itemize}
-\item Returning to the example\ldots{} Suppose we want to query specific conditional probabilites (probability of grandparental genotype given child genotype?). How do we do so?  I will leave it as an exercise because I want to use an alternative graph.
-\label{sec-1-1-5-1}
-\item Draw the example from Jordan Chapter 3.
-\label{sec-1-1-5-2}
-\item Basic recipe:
-\label{sec-1-1-5-3}
-\begin{itemize}
-\item Write out sum over full joint distribution
-\label{sec-1-1-5-3-1}
-\item Move sums as far in as possible (represents the elimination ordering)
-\label{sec-1-1-5-3-2}
-\item Replace conditional probabilities in sum's with messages (e.g.$m(x_2)$) to be message passed from node $X_2$.
-\label{sec-1-1-5-3-3}
-\item Continue building messages until all nodes eliminated.
-\label{sec-1-1-5-3-4}
-\end{itemize}
-\item Example: Felsenstein Pruning algorithm (1981, JME)
-\label{sec-1-1-5-4}
-\begin{itemize}
-\item Tree with data at tips.  Compute probability of the data. Each message is pruning off of tips on the tree.
-\label{sec-1-1-5-4-1}
-\end{itemize}
+\item $X \rightarrow Y \rightarrow Z$ and $Y\not\in O$
+\item $X \leftarrow Y \leftarrow Z$ and $Y\not\in O$
+\item $X \leftarrow Y \rightarrow Z$ and $Y\not\in O$
+\item $X\rightarrow Y \leftarrow Z$ and $Y$ or any of $Y$'s
+  descendants are in $O$
 \end{itemize}
 
-\subsubsection*{Additional notation:}
-\label{sec-1-1-6}
-\begin{itemize}
-\item Plates for iid variables
-\label{sec-1-1-6-1}
-\item Examples:
-\label{sec-1-1-6-2}
-\begin{itemize}
-\item regression
-\item pedigree with multiple iid SNPs, add in a common mutation rate, add in observed genotpyes, add in common error rate for observations
-\end{itemize}
-\end{itemize}
-\subsubsection*{Web resources}
-\label{sec-1-1-7}
-\begin{itemize}
-\item Pe'er review: \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.159.7476&rep=rep1&type=pdf}
-\label{sec-1-1-7-1}
-\item Kollar video on elimination algorithm: \url{https://www.youtube.com/watch?v=jz02X3hByac}
-\label{sec-1-1-7-2}
-\item Relevant online course notes:
-\label{sec-1-1-7-3}
+Any two variables $X_i$ and $X_j$ for which there does not exist an
+active trail for observations $O$ are called \emph{d-separated} by
+$O$, written d-sep($X_i;X_j|O$). Two sets of vertices $A$ and $B$ are
+d-separated by $O$ if d-sep($X,Y|O$) for all $X\in A$ and $Y\in B$. 
+
+The key result is the following: if $X$ and $Y$ are d-separated by a
+set $O$, then $X \perp Y | O$. In words, $X$ is conditionally
+independent of $Y$ given $O$ if there does not exist any active trail
+between $X$ and $Y$ for observations $O$. Intuition: active trails allow the
+dependencies to flow. 
+
+\subsection{Elimination Algorithm}
+Assume we have a graph $G$, and we take two disjoint subsets of
+nodes $X_E$ and $X_Q$. Our goal is to calculate $p(X_Q|X_E)$. In this
+section, we will focus on the case when $X_Q$ is one node called the
+\emph{query node}, and the set of nodes $X_E$ are called
+\emph{evidence nodes}.
+
+Assume we have the following graph:
+\begin{center}
+\begin{tikzpicture}
+
+  % Define nodes
+  \node[latent]                              (x1) {$X_1$};
+  \node[latent, above right=of x1]              (x2) {$X_2$};
+  \node[latent, below right=of x3, below=of x2]                              (x3) {$X_3$};
+  \node[latent, above right=of x2]                              (x4) {$X_4$};
+  \node[latent, right=of x3]                              (x5) {$X_5$};
+  \node[obs, above right=of x5, below=of x4, right=of x5]                              (x6) {$X_6$};
+
+
+  \edge {x1} {x2} ; %
+  \edge {x1} {x3} ; %
+  \edge {x2} {x4} ; %
+  \edge {x2} {x6} ; %
+  \edge {x3} {x5} ; %
+  \edge {x5} {x6} ; %
+\end{tikzpicture}
+\end{center}
+Let our evidence set be $\{X_6\}$ and our query set be $\{X_1\}$. We
+want to compute:
+\begin{align*}
+p(X_1|X_6) = \frac{p(X_1,X_6)}{p(X_6)} = \frac{p(X_1,X_6)}{\sum_{x_1}p(X_1=x_1,X_6)}
+\end{align*}
+The elimination algorithm provides an effective computational method
+for making these calculations. 
+
+From the expression above, it seems that to compute the conditional distribution, we just need to be able to
+compute the joint distribution $p(X_1,X_6)$. We could start off by
+marginalizing the full joint distribution for all variables:
+\begin{align*}
+p(X_1,X_6) = \sum_{x_2}\sum_{x_3}\sum_{x_4}\sum_{x_5}p(X_1,X_2,\ldots,X_6)
+\end{align*}
+In this case,if every $X_i$ can take on one of $k$ values, this expression would
+have $k^4$ terms. However, using the conditional independence
+relations from the graph, we get:
+\begin{align*}
+p(X_1,X_6) &=
+\sum_{x_2}\sum_{x_3}\sum_{x_4}\sum_{x_5}p(X_1)p(X_2|X_1)p(X_3|X_1)p(X_4|X_2)p(X_5|X_3)p(X_6|X_2,X_5)
+\\
+&=p(X_1)p\sum_{x_2}(X_2|X_1)\sum_{x_3}p(X_3|X_1)\sum_{x_4}p(X_4|X_2)\sum_{x_5}p(X_5|X_3)p(X_6|X_2,X_5)
+\end{align*}
+We can further simplify this summation by introducing the following
+notation. Let $m_i(x_{S_i})$ denote the expression that arises when
+performing the sum $\sum_{x_i}$ where $x_{S_i}$ are the variables,
+other than $x_i$ that appear in the summand. Employing this notation,
+we get:
+\begin{align*}
+p(X_1,X_6) &=
+p(X_1)p\sum_{x_2}(X_2|X_1)\sum_{x_3}p(X_3|X_1)\underbrace{\sum_{x_4}p(X_4|X_2)}_{m_4(x_2)}\underbrace{\sum_{x_5}p(X_5|X_3)p(X_6|X_2,X_5)}_{m_5(x_2,x_3)}
+\\
+&=
+p(X_1)p\sum_{x_2}(X_2|X_1)m_4(x_2)\underbrace{\sum_{x_3}p(X_3|X_1)m_5(x_2,x_3)}_{m_3(x_1,x_2)}
+= p(X_1)p\sum_{x_2}(X_2|X_1)m_4(x_2)m_3(x_1,x_2) \\
+&= p(x_1)m_2(x_1) \\
+\end{align*}
+Using this result, we get the desired conditional probability:
+\begin{align*}
+\Rightarrow p(X_1|X_6) &= \frac{p(x_1)m_2(x_1)}{\sum_{x_1}p(x_1)m_2(x_1)}
+\end{align*}
+This exercise gives rise to a general algorithm for computing marginal
+probabilities. To see the details of this algorithm, refer to the
+handout given in class entitled \emph{The Elimination Algorithm}.
+
+In statistical genetics, Felsenstein's tree-pruning algorithm (1981, JME) computes
+the likelihood of an evolutionary tree from nucleic acid sequence
+data. This pruning algorithm was an early instance of the elimination
+algorithm. As a simplified illustration, we can represent a phylogeny
+as a tree in which the leaves correspond to the \emph{observed} values
+of a site across different species. The non-leaves are values of the site
+for the ancestors. Each edge of the tree can represent the
+\emph{evolutionary distance} to be estimated which can be encoded as the
+conditional probability of a state given its ancestral state. Using
+Felsenstein's pruning algorithm, we can obtain the joint probability
+across all sites. This can be used in conjunction with the EM
+algorithm to find the maximum likelihood tree. 
+
+Relevant online course notes:
 \begin{itemize}
 \item \url{http://www.inf.ed.ac.uk/teaching/courses/pmr/slides/elim-2x2.pdf}
-\item \url{https://www.cs.cmu.edu/~aarti/Class/10701/readings/graphical_model_Jordan.pdf}
+\item \url{https://www.cs.cmu.edu/~aarti/Class/10701/readings/graphical_model\_Jordan.pdf}
 \item \url{http://www.cs.columbia.edu/~blei/fogm/2015F/notes/inference.pdf}
 \item \url{http://www.cs.berkeley.edu/~jordan/courses/281A-fall04/}
 \end{itemize}
-\item For drawing graphical models
-\label{sec-1-1-7-4}
+For drawing graphical models
 \begin{itemize}
 \item \url{https://github.com/jluttine/tikz-bayesnet}
 \end{itemize}
-\end{itemize}
-% Emacs 24.5.1 (Org mode 8.2.10)
+
 \end{document}
+

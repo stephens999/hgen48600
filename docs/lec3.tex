@@ -1,24 +1,36 @@
-
-\documentclass[11pt]{article}
-
-\title{HGEN 48600 Lecture Notes}
-\author{Arjun Biddanda}
-\date{\today}
-
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
 \usepackage{hyperref}
-\usepackage{amsmath}
-\usepackage{amssymb}
-
 \begin{document}
+
+\scribe{Arjun Biddanda}		% required
+\lecturenumber{3}			% required, must be a number
+\lecturedate{January 12}		% required, omit year
+\lecturer{Matthew Stephens}
 \maketitle
 
-\section*{Introduction}
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
 
-The primary theme of todays lecture is on likelihoods, likelihood ratios, and their interpretation. The writeup here \textit{heavily} samples from the excellent vignettes found \href{http://stephens999.github.io/fiveMinuteStats/analysis/likelihood\_ratio\_simple\_models.html}{here}
 
-\section*{Example : DNA Barcoding of Poached Elephant Tusks}
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
 
-Elephant ivory is a commonly poached item, and we would like to determine which particular environment the elephants are coming from. The elephants cna either come from (1) the savannah or (2) the forest. We denote the following two models and data from an elephant tusk:
+
+\section{Introduction}
+
+The primary theme of todays lecture is on likelihoods, likelihood
+ratios, and their interpretation. The writeup here \textit{heavily}
+samples from the excellent vignettes found here: \\
+\url{http://stephens999.github.io/fiveMinuteStats/analysis/likelihood\_ratio\_simple\_models.html}. 
+
+\section{Example : DNA Barcoding of Poached Elephant Tusks}
+
+Elephant ivory is a commonly poached item, and we would like to determine which particular environment the elephants are coming from. The elephants can either come from (1) the savannah or (2) the forest. We denote the following two models and data from an elephant tusk:
 
 \begin{align*}
 M_s &: \text{Tusk comes from a savannah elephant}\\
@@ -29,7 +41,7 @@ M_f &: \text{Tusk comes from a forest elephant}
 \begin{center}
 	\begin{tabular}{ c | c | c | c }
 		Marker & Allele & $f_S$ & $f_F$\\
-		\hline & & & \\
+		\hline 
 	  1 & 1 & 0.4 & 0.8\\
 	  2 & 0 & 0.12 & 0.2\\
 	  3 & 1 & 0.21 & 0.11\\
@@ -39,7 +51,7 @@ M_f &: \text{Tusk comes from a forest elephant}
 	\end{tabular}
 \end{center}
 
-$f_S$ and $f_F$ represent the allele frequency of the ```1'' allele in the savannah and forest elephant populations respectively. The likelihood of the model $M_S$ can be defined as the probability of the data being generated under the model. 
+$f_S$ and $f_F$ represent the allele frequency of the ``1'' allele in the savannah and forest elephant populations respectively. The likelihood of the model $M_S$ can be defined as the probability of the data being generated under the model. 
 
 \begin{align*}
 	L(M_S) &= P(Data | M_S)\\
@@ -58,18 +70,18 @@ We have defined the likelihood ratio as the ratio of the likelihood of the model
 
 Two distinct questions arise as a result of calculating this likelihood ratio : (1) how to interpret the likelihood ratio and (2) when can we claim that we believe a model over another model given a likelihood ratio?
 
-\subsection*{Context of Individual Likelihoods}
+\subsection{Context of Individual Likelihoods}
 
 The purpose of a likelihood ratio is to examine the evidence (data) in the context of one model against another. As a brief toy example let us consider a fair coin tossed 100 times and landing with 50 heads and 50 tails. What is the likelihood of the model that this coin is a fair coin? $L(M_{fair}) = \left(\frac{1}{2}\right)^{100}$. However this very small number is simply a probability, and actually getting any set of 100 tosses with a fair coin results in this likelihood! Thus we can see that likelihoods are important by providing a context under which they can be interpreted, by comparing two models against each other.  
 
-\subsection*{Notational Things}
+\subsection{Notational Things}
 \begin{itemize}
 \item We often work in ``log-space'' since the individual likelihoods may be quite small. The Log-Likelihood Ratio (LLR) is defined as $log(LR)$
 \item In english we would say $P(Data | M_0)$ as ``The likelihood under the model $M_0$''
 \item Sometimes semicolons are used to denote the data, and curly a ``L'' for the likelihood (i.e. $log(LR) = log\left( \frac{\mathcal{L}(M_S ; D)}{ \mathcal{L}(M_F ; D)}\right)$)
 \end{itemize}
 
-\section*{Example : Continuous Measurement of Protein in Blood}
+\section{Example : Continuous Measurement of Protein in Blood}
 Suppose that we a protein that is measured in the blood and we call this random variable $X$. We want to see if this protein varies in concentration according to disease or non-disease status We wish to test the following two models :
 
 \begin{align*}
@@ -89,7 +101,7 @@ There are a couple of caveats to this approach as well that translate broadly to
 	\item If a likelihood ratio is 0 we can certainly say that 
 \end{itemize}
 
-\subsubsection*{Different Support of Random Variables}
+\subsubsection{Different Support of Random Variables}
 
 Likelihood Ratios still work properly when we have different support for the models. Suppose we have a random variable $X$ which corresponds to the roll of a standard 6-sided dice and the following two models: 
 
@@ -100,7 +112,7 @@ M_{fair} &: \text{The dice is a fair dice}\\
 
 We can imagine two scenarios from this : (1) when the roll is a 6 and (2) when the roll is not a 6. When $X$ is a 6 we have a likelihood ratio of $LR = \frac{P(X | M_6)}{P(X | M_{fair})} = 1/(1/6) = 1/6$. However when $X \neq 6$ we can say that the likelihoo ratio is 0 since $P(X \neq 6 | M_6) = 0$ and this is the numerator of our likelihood ratio.
 
-\section*{Continuation of Disease Example}
+\section{Continuation of Disease Example}
 
 Let us assume that $Z_i = 1$ if patient is diseased, else $Z_i = 0$. 
 
@@ -113,7 +125,7 @@ Odds_{Posterior} &= Odds_{Prior} \times \text{Bayes Factor}\\
 
 When the model is fully-specified the Bayes Factor is equal to the Likelhood Ratio. However the role of the prior odds also plays a large role in our interpretation of the posterior odds. For instance if we believe that the disease is very rare, then we will have to have a much higher likelihood ratio in order to truly believe that we have the disease. It is very important to consider the prior odds of having the disease. 
 
-\section*{Likelihood Functions and Partially Specified Models}
+\section{Likelihood Functions and Partially Specified Models}
 
 Let us review our elephant example now. But let us assume that we have sampled 100 elephants only from the savannah and look at their alleles at one particular marker. We obtain 40 samples that carry the ``1'' and 60 samples that carry the ``0'' allele. We then want to evaluate a particular model and its likelihood : 
 \begin{align*}
@@ -122,5 +134,5 @@ M_q &: \text{Allele frequency of the 1 allele is q}, q \in[0,1]\\
 \end{align*}
 
 One way in which we can compare two potentially different values of $q$ would be to look at their difference in log-likelihood units. We would then look at $log(\mathcal{L}(M_{q_1})) - log(\mathcal{L}(M_{q_2}))$. If we get a log-likelihood difference of 2 then we know that $LR = e^2 \approx 7.4$.  
-
 \end{document}
+
