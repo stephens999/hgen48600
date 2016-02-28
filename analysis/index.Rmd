@@ -14,7 +14,7 @@ title: "Home"
 *   [Lecture 4](../docs/lec4.pdf)
 *   [Lecture 5](../docs/lec5.pdf)
 *   [Lecture 6](../docs/lec6.pdf)
-*   Lecture 7
+*   [Lecture 7](../docs/lec7.pdf)
 *   Lecture 8 - Discussion: [Structure Paper](http://stephenslab.uchicago.edu/assets/papers/Pritchard2000a.pdf)
 *   [Lecture 9](../docs/lec9.pdf)
 
