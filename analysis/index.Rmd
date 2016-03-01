@@ -21,7 +21,7 @@ title: "Home"
 *   Lecture 11
 *   [Lecture 12](../docs/lec12.pdf)
 *   Lecture 13 - Discussion: [Phylogentic Inference](http://www.ncbi.nlm.nih.gov/pubmed/11318142)
-*   Lecture 14
+*   [Lecture 14](../docs/lec14.pdf)
 
 ## fiveMinuteStats
 
