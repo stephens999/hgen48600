@@ -17,6 +17,11 @@ title: "Home"
 *   Lecture 7
 *   Lecture 8 - Discussion: [Structure Paper](http://stephenslab.uchicago.edu/assets/papers/Pritchard2000a.pdf)
 *   [Lecture 9](../docs/lec9.pdf)
+*   Lecture 10
+*   Lecture 11
+*   [Lecture 12](../docs/lec12.pdf)
+*   Lecture 13 - Discussion: [Phylogentic Inference](http://www.ncbi.nlm.nih.gov/pubmed/11318142)
+*   Lecture 14
 
 ## fiveMinuteStats
 

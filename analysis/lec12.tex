@@ -1,0 +1,192 @@
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=R,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\begin{document}
+
+\scribe{Katherine Silliman}		% required
+\lecturenumber{12}			% required, must be a number
+\lecturedate{February 11}		% required, omit year
+\lecturer{Matthew Stephens} 
+
+\maketitle
+
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+
+
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
+
+
+Computing practical on implementing MCMC in R. See \textit{github.com/stephens999/mcmc-examples/blob/master/MCMC/IntroMCMC.R} for original code example.
+
+
+\section{Ex.1: Sampling from an exponential distribution using MCMC}
+Any MCMC scheme aims to produce (dependent) samples from a "target" distribution $\pi \left (x \right )$.
+In this case we are going to use the exponential distribution with mean 1 as our target distribution. So we start by defining our target density: 
+
+\begin{lstlisting}
+target = function(x){
+    if(x<0){
+        return(0)}
+    else {
+        return( exp(-x))}
+}
+\end{lstlisting}
+
+Recall that the Metropolis-Hastings algorithm is useful for sampling from a distribution that is proportional to our target distribution. It involves the following steps: 
+
+\begin{enumerate}
+\item Initialization: pick an initial state \textit{x} (usually at random)
+\item Randomly draw a state \textit{x'} from the proposal distribution $Q\left ( x \rightarrow {x}' \right )$
+\item Accept the state according to the acceptance distribution \textit{H}:
+\begin{equation}
+H = min\left (1, \frac{\pi \left ( {x}' \right ) Q\left ( {x}' \rightarrow x \right )}{\pi\left ( x \right ) Q\left ( x\rightarrow {x}' \right )} \right ).
+\end{equation}
+If not accepted state remains at \textit{x}, otherwise transitions to \textit{x'}
+\item Save state x, go to \#2
+\item Repeat desired number of iterations
+\end{enumerate}
+We can code a Metropolis-Hastings scheme in R like this:
+\begin{lstlisting}
+easyMCMC = function(niter, startval, proposalsd){
+    x = rep(0,niter)
+    x[1] = startval     
+    for(i in 2:niter){
+        currentx = x[i-1]
+        proposedx = rnorm(1,mean=currentx,sd=proposalsd) 
+        A = target(proposedx)/target(currentx)
+        if(runif(1)<A){
+            x[i] = proposedx       # accept move with probabily min(1,A)} 
+        else {
+        x[i] = currentx        # otherwise "reject" move, and stay where we are} }
+    return(x) }
+\end{lstlisting}
+
+$\ast$ Note that since $\frac{Q\left ({x}' \rightarrow x \right )}{Q \left (x \rightarrow {x}' \right )} = 1$, we are only computing $\frac{\pi \left ({x}' \right )}{\pi \left (x \right ) }$ to determine acceptance.
+
+Plotting \textit{x} shows us the \textbf{trace} of our Markov chain. When x is high dimensional it is more difficult or impossible to view a trace of \textit{x}.
+\begin{lstlisting}
+#Run MCMC 3 times and look at how similar the results are.
+z1=easyMCMC(1000,3,1)
+z2=easyMCMC(1000,3,1)
+z3=easyMCMC(1000,3,1)
+plot(z1,type="l")
+lines(z2,col=2)
+lines(z3,col=3)
+\end{lstlisting}
+
+\begin{figure}[!htb]
+\minipage{0.5\textwidth}
+\includegraphics[width=\linewidth]{mcmcplot3.png}
+\endminipage\hfill
+\minipage{0.5\textwidth}
+\includegraphics[width=\linewidth]{mcmcplot4.png}
+\endminipage\hfill
+\end{figure}
+
+By playing around with the proposal standard deviation, number of iterations, and starting value we can see how these affect the MCMC output. 
+\begin{description}
+\item[Starting value:] If the starting value is way outside of the target distribution, it will take longer to converge. The code also will not run with a negative starting value. 
+\item[Proposal SD:] A very small proposal SD will make it take longer to converge, whereas a large SD will result in the chain getting "stuck" a lot as values will more frequently get rejected. Intuitively, an SD of 0 will result in a flat trace as x never changes.
+\item[Number of iterations:] An adequate nuber of iterations are required in order for the chain to converge. 
+\end{description}
+
+\textbf{"sticky chain":} high autocorrelation among steps
+
+We can also change the target distribution.
+\begin{lstlisting}
+target = function(x){
+    return((x>0 & x <1) + (x>2 & x<3))
+}
+\end{lstlisting}
+This target will have a bimodal distribution. If the SD is too small (i.e. 0.1) it will not work.
+
+\subsection{Tuning the MCMC}
+
+Tuning your proposal involves finding the best values of the proposal standard deviation in order for the chain to mix faster. 
+This is usually accomplished by ruunning a test chain and looking at the proportion of steps that are accepted. If the proportion of accepted steps is too high, it may slow down mixing. In general, when you have higher dimensions in your target values the optimal optimal acceptance rate is lower.
+
+\textbf{adaptivity:} where you change the rules (i.e. the proposal SD) for an ongoing MCMC chain based on what you see in the trace. This is risky as it may end up not being a true Markov chain. 
+Another important consideration is that the probability of storing an observation must be unbiased and not depend on what stage the chain is currently in. 
+A common way to \textit{thin} values is to set a consistent interval for recorded observations (i.e. every 10 iterations).
+
+\section{Ex.3: Estimating an allele frequency and inbreeding coefficient (Gibbs Sampler)}
+In class we glossed over Example 2 in the IntroMCMC.R, which goes over how to implement an MCMC to estimate the allele frequency in a population showing Hardy-Weinberg equilibrium.
+Example 3 illustrates how to implement a 2 dimensional Markov chain to estimate an allele frequency and inbreeding coefficient.
+From IntroMCMC.R:
+" A slightly more complex alternative than HWE is to assume that there is a tendency for people to mate with others who are slightly more closely-related than "random" (as might
+happen in a geographically-structured population, for example). This will result in an excess of homozygotes compared with
+HWE. A simple way to capture this is to introduce an extra parameter,
+the "inbreeding coefficient" f, and assume that the genotypes AA, Aa and aa have frequencies $fp + \left ( 1-f\right )p^2$, $\left (1-f \right ) 2p\left (1-p\right )$, and $f\left (1-p \right) + \left(1-f\right )\left (1-p\right)^2$
+In most cases it would be natural to treat f as a feature of
+the population, and therefore assume f is constant across loci. For simplicity we will consider just a single locus.
+
+Note that both f and p are constrained to lie between 0 and 1 (inclusive). A simple prior for each of these two parameters is to assume
+that they are independent, uniform on [0,1]. Suppose that we sample n individuals, and observe nAA with genotype AA,
+nAa with genotype Aa and naa with genotype aa.
+
+One way we can implement and MCMC routine to get f and p is to update both f and p each iteration and assume that they are independent. Another way is to implement a Gibbs Sampler. 
+To do this, we use a "latent variable" $Z_i$, a representation of whether an individual came from an inbred mating $f$ or non-inbred mating $(1-f)$. This way we can implement a posterior dstribution for p that does not depend on f.
+
+
+\begin{equation}
+    Z_i =
+    \begin{cases}
+    1, & wpf \\
+    0, & wp\left(1-f \right)
+    \end{cases}
+\end{equation}
+$Z_i \sim Bernoulli\left (f \right )$
+
+This makes the likelihoods of the data(genotypes) given p and Z not depend on f:
+\begin{eqnarray}
+p\left (AA|z_i = 1 \right ) = p \\
+%
+p\left (AA|z_i = 0 \right ) = p^2 \\
+%
+p\left (Aa|z_i = 1 \right ) = 0 \\
+%
+p\left (Aa|z_i = 0 \right ) = 2p\left (1-p \right )\\
+%
+p\left (aa|z_i = 1 \right ) = 1-p \\
+%
+p\left (aa|z_i = 0 \right ) = \left ( 1-p \right )^2
+\end{eqnarray}
+
+To implement the Gibbs sampler, you would iterate over the following steps:
+\begin{enumerate}
+\item Sample Z from $p\left(z| g, f, p\right)$
+\item Sample f,p from $p\left(f, p |g, z\right)$
+\end{enumerate}
+
+\end{document}
+
