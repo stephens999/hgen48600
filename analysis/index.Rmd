@@ -8,21 +8,23 @@ title: "Home"
 
 ## Lecture Notes
 
-*   [Lecture 1](../docs/lec1.pdf)
-*   [Lecture 2](../docs/lec2.pdf)
-*   [Lecture 3](../docs/lec3.pdf)
-*   [Lecture 4](../docs/lec4.pdf)
-*   [Lecture 5](../docs/lec5.pdf)
-*   [Lecture 6](../docs/lec6.pdf)
-*   [Lecture 7](../docs/lec7.pdf)
+*   [Lecture 1](../docs/lec1.pdf): Review of Probability 
+*   [Lecture 2](../docs/lec2.pdf): Intro to Graphical Models
+*   [Lecture 3](../docs/lec3.pdf): Likelihood-based Inference
+*   [Lecture 4](../docs/lec4.pdf): Mixture Models
+*   [Lecture 5](../docs/lec5.pdf): Intro to Bayesian Inference
+*   [Lecture 6](../docs/lec6.pdf): Discrete Markov Chains
+*   [Lecture 7](../docs/lec7.pdf): MCMC
 *   Lecture 8 - Discussion: [Structure Paper](http://stephenslab.uchicago.edu/assets/papers/Pritchard2000a.pdf)
-*   [Lecture 9](../docs/lec9.pdf)
-*   [Lecture 10](../docs/lec10.pdf)
-*   Lecture 11
-*   [Lecture 12](../docs/lec12.pdf)
+*   [Lecture 9](../docs/lec9.pdf): Poisson Process
+*   [Lecture 10](../docs/lec10.pdf): Hidden Markov Models
+*   [Lecture 11](../docs/lec11.pdf): Continuous Time Markov Processes
+*   [Lecture 12](../docs/lec12.pdf): MCMC in practice
 *   Lecture 13 - Discussion: [Phylogentic Inference](http://www.ncbi.nlm.nih.gov/pubmed/11318142)
-*   [Lecture 14](../docs/lec14.pdf)
-*   [Lecture 15](../docs/lec15.pdf)
+*   [Lecture 14](../docs/lec14.pdf): Multivariate Normal, Intro to Gaussian Processes
+*   [Lecture 15](../docs/lec15.pdf): Factor models, Brownian Motion
+*   Lecture 16 - Discussion: [SCAT paper](http://stephenslab.uchicago.edu/assets/papers/Wasser2004.pdf)
+* Lecture 17
 
 ## fiveMinuteStats
 
