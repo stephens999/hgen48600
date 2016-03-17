@@ -1,0 +1,193 @@
+% Created 2016-02-27 Sat 15:28
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
+\begin{document}
+
+\scribe{Nicholas Knoblauch}		% required
+\lecturenumber{11}			% required, must be a number
+\lecturedate{February 9}		% required, omit year
+\lecturer{John Novembre} 
+
+\maketitle
+
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+
+
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
+
+
+% please leave this comment 
+\tolerance=1000
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{HMMLec}
+\author{nwknoblauch}
+\date{\today}
+
+
+\section{Continuous Time Markov Chains}
+\label{sec-1}
+\subsection{Differential equations that lead to the poisson distribution}
+\label{sec-1-1}
+
+We can describe the probability that the number of events that have occured by time $t$ as $N_t$, and can write the probability as:
+$P(N_t=i)=P_i(t)$
+
+With the rate parameter $\lambda$, the probability that $N_t=i$ at $t+h$ is given by:
+ 
+$P_i(t+h)=P_{\mathrm{i-1}}(t)(\lambda h + o(h)) + P_i(t)(1-\lambda h + o(h)) $
+
+Here we are summing over the probability of two scenarios.  The first represents that $N_t=i-1$ and that there was another event in time $h$.  The second is that $N_t=i$ and that there was no event in time $h$. For small vaues of $h$ we can ignore the probabilty of two steps in time $h$.
+
+
+The limit as $h$ goes to 0 is: $\frac{P_i(t+h)-P_i(t)}{h}=\frac{d}{dt}P_i(t)=P_{i-1}(t)(\lambda h + o(h)) + P_i(t)(1-\lambda h + o(h))-P_i(t)$
+
+Cancel the one and divide by $h$ to get:
+
+$(\lambda )P_{i-1}(t) -P_i(t) P_0(t+h)=P_0(t)(1-\lambda h + o(h))$
+
+ $\frac{d P_0(t)}{dt}= -\lambda P_0(t)$
+ 
+The solution to this differential equation is:
+$P_0(t)= e^{\mathrm{-\lambda t}}$ plus some constant
+
+$\frac{P_i(t)}{dt}=\lambda P_0(t) -\lambda P_i(t)=\lambda e^{-\lambda t} -\lambda P_1(t)$
+
+To get the solution for $P_1$ we use an integrating factor
+
+$\frac{d P_1(t)}{dt} + \lambda P_1(t) = \lambda e^{-\lambda t}$
+
+$\int_0^T e^{-\lambda t} \frac{d P_1(t)}{dt} + \lambda e^{-\lambda t} P_1(t) = \int_0^T \lambda$
+
+Remembering the product rule: $(fg)'=f'g+g'f$
+
+$$ \int_0^T \frac{d}{dt} = \int_0^T \frac{d}{dt} ( e^{\lambda t} P_1(t)) = \int_0^T \lambda dt = P_1(t)=\lambda t e^{-\lambda t}$$
+
+
+We can keep iterating:
+$P_2(t)= \frac{(\lambda t)^2}{2} e^{-\lambda t}$
+And eventually we have 
+$P_n(t) = \frac{(\lambda t)^n}{n!} e^{-\lambda t}$
+
+This is the poisson process
+\subsection{A More General Process, the Pure Birth Process}
+\label{sec-1-2}
+
+More general than the poisson process is a ``birth process'', or ``pure birth process''
+
+In a pure birth process there is a state dependent rate of arrival:
+
+$\frac{d}{dt} P_i(t) = \lambda_{i-1} P_{i-1}(t) -\lambda_i P_i(t)$
+
+The poisson process is a special case where $\lambda_i$ is constant.
+
+Another example is the \textbf{linear birth process}, where the $\lambda_i=i \lambda$ (This is also known as a Yule process)
+
+$P_j(t) = {{j-1}\choose{k-1}} e^{-\lambda t} (1-e^{\lambda t})^{k-i}$ where $k$ is the starting size.  This is a negative binomial distribution (and is a transient solution)
+
+Another major class is a birth-death process.  We have a set of birth rates and a set of death rates. ($\lambda$ from 0 to infinity, and $\mu$ from 1 to infinity)
+
+$\frac{d}{dt} P_i(t) = \lambda_{i-1} P_{i-1}(t) + \mu_{i-1}P_{i+1}(t) - (\lambda_i + \mu_i)P(i)(t)$
+
+There is a linear birth-death process $\lambda_i=i \lambda$ and $\mu_i = i\mu$
+
+There is also linear birth-death with immigration
+
+$\lambda_i = i \lambda + \theta$
+$\mu_i = i \mu$
+\subsection{Continuous version of the Markov property}
+\label{sec-1-3}
+
+Independence of the past before the immediate past
+$P(X(t+s)=j|X(s)=i,X_u=x(u),0 \leq u < s ) = P(X(t+s)=j|X(s)=i)$
+\subsection{Rate matrix $Q$}
+\label{sec-1-4}
+
+We have been thinking about going from 0 to 1, but we can think in general about going from $i$ to $j$ 
+Defining the generator matrix or Rate Matrix $Q$
+$P_{i,j}(h) = q_{ij} h + o(h)$
+$P_{i,i}(h)= 1- v_i h + o(h)$ Where $v_i = \sum_j q_{ij}$
+
+If we define $q_{ii}=-v_i$ Then $Q = {q_{ij}}$
+
+Inter-event times depend on $i$ and they are exponential with rate $v_i$
+$P_{ij}=\frac{q_{ij}}{v_i}$
+This looks like a discrete markov chain. There is an idea that we have a discrete markov chain embedded in a continuous markov chain
+\subsubsection{$Q$ matrix for poisson}
+\label{sec-1-4-1}
+
+For the poisson process, $Q$ is infinite in both directions.   
+The diagonal has $-\lambda$ along the diagonal. One to the right of the diagonal is $\lambda$, the rate at which we arrive at the next state. (There is no return to previous states in the poisson process)
+ 
+\subsubsection{$Q$ matrix for the birth-death process}
+\label{sec-1-4-2}
+
+Matrix goes on infinitely in both directions.  Along the diagonal we have $\lambda0$ for 0,0 followed by $-(\mu_k+\lambda_k)$ at $k,k$  at $k,k-1$ we have $\mu_k$ and at $k,k+1$ we have $\lambda_k$
+For $P$, we have $\frac{\mu_k}{\lambda_k+\mu_k}$, at $k,k-1$.  At $k,k+1$ we have $\frac{\lambda_k}{\lambda_k+\mu_k}$, and at the diagonal we have 1 minus the two off diagonals
+
+$\frac{P_{ij}(t)}{dt} = v_j P{ij}(t) + \sum_{k \neq j} P_{ik}(t) q_{kj}$ This is the probability of going from $i$ to $j$, plus the probability of going form $i$ to $k$ and then going to $j$
+
+$\frac{d P_t}{dt} = P_t Q$
+$P_t = e^{Qt}$
+
+If $Q$ is diagonalizable, then we can write $Q t =U D U^{-1}$ where $D$ is a diagonal matrix, then $e^{Qt} = Ue^{D}U^{-1}$
+
+There are a branch of methods called Krylov methods for exponentiating matrices.
+\subsection{What about stationary distributions?}
+\label{sec-1-5}
+
+   
+\subsubsection{The Global Balance Equations}
+\label{sec-1-5-1}
+
+Define $P_i$ as the stationary probability of being in state $i$ which is the limit as $t$ goes to infinity of $P_{ij}(t)$
+$v_j P_j = \sum_k q_{kj} P_k$
+This equation describes a situation where the rate out of state $j$ (weighted by the probability of being in state $j$, or the flux) is  equal to the flux into state $j$
+
+If a Continuous Time Markov Chain is time reversible, then $P_i q_{ij} = P_j q_{ji}$ and it satisfies the local balance equations.  The flux from $i$ to $j$ is equal to the flux from $j$ to $i$
+
+What is the flux out for state 0?
+
+
+\begin{center}
+\begin{tabular}{rll}
+ State  &  Flux out                   &  Flux in                                    \\
+\hline
+     0  &  $\lambda_0 P_0$            &  $\mu_1 P_1$                                \\
+     1  &  $(\lambda_1 + \mu_1) P_1$  &  $\lambda_0 P_0 + \mu_2 P_2$                \\
+     2  &  $(\lambda_2 + \mu_2) P_2$  &  $\lambda_1 P_1 + \mu_3 P_3$                \\
+     n  &  $(\lambda_n + \mu_n) P_n$  &  $\lambda_{n-1} + \mu_{n+1} P_{n+1}$  \\
+\end{tabular}
+\end{center}
+
+
+
+These all have to be equal
+
+$\lambda_0 P_0 = \mu_1 P_1$
+$\lambda_1 P_1 = \mu_2 P_2$
+$\lambda_n P_n= \mu_{n+1} P_{n+1}$
+
+We can start solving everything in terms of $P_0$
+
+$P_1 = \frac{\lambda_0 P_0}{\mu_1}$
+$P_3 = \frac{\lambda_2}{\mu_3} P_2$
+$P_n = \frac{\lambda_{n-1} ... \lambda_1}{\mu_n ... \mu_1} P_0$
+
+We know that $1= P_0 + \sum_{n=1}^\infty P_n P_0$
+
+in the linear birth-death model
+$P_n = \frac{\lambda}{\mu}^n (\frac{1}{1+\sum_{i=1}{\infty} \frac{\lambda}{\mu}^n}$
+
+Even though this is an infinte sum, it turns out that:
+$P_n= \frac{\lambda}{\mu}^n (1-\frac{\lambda}{\mu})$
+
+We know this because $\sum_{n=1}^\infty p(1-p)^{n-1} = 1$
+
+\end{document}
