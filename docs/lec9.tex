@@ -122,6 +122,29 @@ P(T_1 \le s | N(t) = 1) &= 1- P(T_1 > s |N(t) =1)\\
 &=\frac{s}{t}
 \end{align*}
 
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+\subsection{Splitting and superposition}
+In order to develop point processes suitable for certain models, one can employ mathematical operations that remove points from Poisson process (splitting i.e. thinning), or combining points from multiple Poisson processes (superposition).
+
+\subsubsection{Superposition}
+If we combine the points from two Poisson processes with rates $r_1$ and $r_2$, the result is a Poisson process with rate $r_1 + r_2$. More formally, suppose we have two Poisson processes of rate $\lambda_1$ and $\lambda_2)$, given by $\{N_1(t) ; t>0\}$ and $\{N_2(t) ; t>0\}$. The two are independent if for all $t_1, ..., t_n$, the random variables $N_1(t_1),...,N_1(t_n)$ are independent of $N_2(t_1),...,N_1(t_n)$. Suppose $N(t) = N_1(t) + N_2(t)$ for all $t>0$. Then $\{N_t; t>0\} $then a Poisson process with rate $\lambda_1+\lambda_2$ .\
+
+\subsubsection{Splitting}
+Now suppose we have a Poisson process $\{N_t; t>0\}$ with rate $\lambda$. Suppose each arrival is switched to $\{N_1(t) ; t>0\}$ with probability $p$ and switched to $\{N_2(t) ; t>0\}$ with probability $(1-p)$. Then $\{N_1(t) ; t>0\}$ is a Poisson process with rate $\lambda p$ and $\{N_2(t) ; t>0\}$ is a Poisson process with rate $\lambda (1-p)$
+
+\subsection{Compound Poisson processes}
+Compound Poisson processes assign a random value or weight to each point in a Poisson process.
+
+\subsection{Non-homogenous Poisson processes}
+So far, we have considered Poisson processes where the rate parameter $\lambda$ is constant for all time $t > 0$. A nonhomogenous Poisson process is one where the `rate,' referred to as an intensity function $\lambda(t)$ can vary over time. $\{N_t; t>0\}$ is a nonhomogenous or inhomogenous Poisson process if\\
+1. $N(0) = 0$\\
+2. $\{N(t), t\ge 0 \}$ has independent increments\\
+3. $P(N(t+h) - N(t) \ge 2) = o(h)$\\
+4.$ P(N(t+h) - n(t) = 1) = \lambda(t)h + o(h)$\\
+Note that a nonhomogenous Poisson process with $\lambda(t) = \lambda$ for all $t>0$ is a homogenous Poisson process.\\
+Also note that for the nonhomogenous Poisson process, the interarrival times are no longer exponentially distributed, nor are they independent. 
+\subsection{Compound or mixed `Poisson' processes}
 
 \end{document}
 
