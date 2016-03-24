@@ -24,7 +24,9 @@ title: "Home"
 *   [Lecture 14](../docs/lec14.pdf): Multivariate Normal, Intro to Gaussian Processes
 *   [Lecture 15](../docs/lec15.pdf): Factor models, Brownian Motion
 *   Lecture 16 - Discussion: [SCAT paper](http://stephenslab.uchicago.edu/assets/papers/Wasser2004.pdf)
-* Lecture 17
+*   [Lecture 17](../docs/lec17.pdf): Undirected Graphical Models 
+
+A pdf with the complete set of lectures notes can be found [here](../docs/all_lectures.pdf).
 
 ## fiveMinuteStats
 
