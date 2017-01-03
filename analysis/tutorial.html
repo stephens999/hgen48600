@@ -8,18 +8,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
+
 <meta name="author" content="Joyce Hsiao" />
 
 <meta name="date" content="2015-12-12" />
 
 <title>Setting up the website</title>
 
-<script src="libs/jquery-1.11.0/jquery.min.js"></script>
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="libs/bootstrap-3.3.1/css/united.min.css" rel="stylesheet" />
-<script src="libs/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/respond.min.js"></script>
+<link href="libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 
 <style type="text/css">
 
@@ -76,6 +77,34 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
 </head>
 
 <body>
@@ -90,12 +119,34 @@ code {
   color: inherit;
   background-color: rgba(0, 0, 0, 0.04);
 }
-img { 
-  max-width:100%; 
-  height: auto; 
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
 }
 </style>
+
+
 <div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
 
 
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -106,35 +157,39 @@ img {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">ashlar</a>
+      <a class="navbar-brand" href="index.html">hgen 48600</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li><a href="index.html">Home</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="license.html">License</a></li>
-        <li><a href="https://github.com/jhsiao999/ashlar">GitHub</a></li>
+        <li><a href="https://github.com/stephens999/hgen48600">GitHub</a></li>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div id="header">
-<h1 class="title">Setting up the website</h1>
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Setting up the website</h1>
 <h4 class="author"><em>Joyce Hsiao</em></h4>
 <h4 class="date"><em>2015-12-12</em></h4>
+
 </div>
 
 <div id="TOC">
 <ul>
 <li><a href="#objectives">Objectives</a></li>
-<li><a href="#cloning-ashlar">Cloning <a href="http://github.com/jhsiao999/ashlar]"><em>ashlar</em></a></a></li>
+<li><a href="#cloning-ashlar">Cloning <a href="http://github.com/jhsiao999/ashlar%5D"><em>ashlar</em></a></a></li>
 <li><a href="#reset-git-remote-directory">Reset git remote directory</a></li>
 <li><a href="#producing-and-publishing-the-website">Producing and publishing the website</a></li>
 </ul>
 </div>
 
-<p><strong>Last updated:</strong> 2015-12-12</p>
-<p><strong>Code version:</strong> 10bba89416931e220d918ac8ed713ee5c4bd7bb9</p>
+<p><strong>Last updated:</strong> 2017-01-03</p>
+<p><strong>Code version:</strong> 3b3c70521f9bde2b8fc75576eaf397828c622833</p>
 <hr />
 <div id="objectives" class="section level3">
 <h3>Objectives</h3>
@@ -143,7 +198,7 @@ img {
 <hr />
 </div>
 <div id="cloning-ashlar" class="section level3">
-<h3>Cloning <a href="http://github.com/jhsiao999/ashlar]"><em>ashlar</em></a></h3>
+<h3>Cloning <a href="http://github.com/jhsiao999/ashlar%5D"><em>ashlar</em></a></h3>
 <p><a href="http://github.com/jhsiao999/ashlar"><em>ashlar</em></a> is set up to mimic the workflow implemented in <a href="https://github.com/jdblischak/singleCellSeq"><em>singleCellSeq</em></a>. Both projects adopt the popular <a href="http://rmarkdown.rstudio.com/"><em>rmarkdown</em></a> website layout.</p>
 <p>I suggest cloning into a new folder in order to distinguish your work from the example repository.</p>
 <pre><code>git clone https://github.com/jhsiao999/ashlar.git ashlar-trial</code></pre>
@@ -235,6 +290,8 @@ $(document).ready(function () {
 
 </script>
 
+
+
 </div>
 
 <script>
@@ -246,6 +303,15 @@ $(document).ready(function () {
 
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 
 </body>
 </html>
