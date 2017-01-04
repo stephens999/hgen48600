@@ -10,14 +10,15 @@
 
 
 
+
 <title>Home</title>
 
-<script src="libs/jquery-1.11.0/jquery.min.js"></script>
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="libs/bootstrap-3.3.1/css/united.min.css" rel="stylesheet" />
-<script src="libs/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/respond.min.js"></script>
+<link href="libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 
 <style type="text/css">
 
@@ -74,6 +75,34 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
 </head>
 
 <body>
@@ -88,12 +117,34 @@ code {
   color: inherit;
   background-color: rgba(0, 0, 0, 0.04);
 }
-img { 
-  max-width:100%; 
-  height: auto; 
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
 }
 </style>
+
+
 <div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
 
 
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -116,54 +167,31 @@ img {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div id="header">
-<h1 class="title">Home</h1>
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Home</h1>
+
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#lecture-notes">Lecture Notes</a></li>
 <li><a href="#fiveminutestats">fiveMinuteStats</a></li>
 <li><a href="#sebastian-pott-data">Sebastian Pott Data</a></li>
-<li><a href="#ccr5-data">CCR5 data</a></li>
 </ul>
 </div>
 
-<p><strong>Last updated:</strong> 2016-03-01</p>
-<p><strong>Code version:</strong> 4b57b1a2c0f88df3b171c0434e7bcb594953f39a</p>
-<div id="lecture-notes" class="section level2">
-<h2>Lecture Notes</h2>
-<ul>
-<li><a href="../docs/lec1.pdf">Lecture 1</a></li>
-<li><a href="../docs/lec2.pdf">Lecture 2</a></li>
-<li><a href="../docs/lec3.pdf">Lecture 3</a></li>
-<li><a href="../docs/lec4.pdf">Lecture 4</a></li>
-<li><a href="../docs/lec5.pdf">Lecture 5</a></li>
-<li><a href="../docs/lec6.pdf">Lecture 6</a></li>
-<li>Lecture 7</li>
-<li>Lecture 8 - Discussion: <a href="http://stephenslab.uchicago.edu/assets/papers/Pritchard2000a.pdf">Structure Paper</a></li>
-<li><a href="../docs/lec9.pdf">Lecture 9</a></li>
-<li>Lecture 10</li>
-<li>Lecture 11</li>
-<li><a href="../docs/lec12.pdf">Lecture 12</a></li>
-<li>Lecture 13 - Discussion: <a href="http://www.ncbi.nlm.nih.gov/pubmed/11318142">Phylogentic Inference</a></li>
-<li><a href="../docs/lec14.pdf">Lecture 14</a></li>
-</ul>
-</div>
+<p><strong>Last updated:</strong> 2017-01-03</p>
+<p><strong>Code version:</strong> 3b3c70521f9bde2b8fc75576eaf397828c622833</p>
 <div id="fiveminutestats" class="section level2">
 <h2>fiveMinuteStats</h2>
-<p>A collection of short vignettes describing fundamental ideas from lecture live <a href="http://stephens999.github.io/fiveMinuteStats/analysis/">here</a>.</p>
+<p>A collection of short vignettes describing fundamental ideas from lecture live <a href="http://stephens999.github.io/fiveMinuteStats/">here</a>.</p>
 </div>
 <div id="sebastian-pott-data" class="section level2">
 <h2>Sebastian Pott Data</h2>
 <ul>
 <li><a href="potts_1.html">Simple Markov Exercise</a></li>
-</ul>
-</div>
-<div id="ccr5-data" class="section level2">
-<h2>CCR5 data</h2>
-<ul>
-<li><a href="ccr5.html">Some basic calculations with the data</a></li>
 </ul>
 </div>
 
@@ -192,6 +220,8 @@ $(document).ready(function () {
 });
 
 </script>
+
+
 
 </div>
 
