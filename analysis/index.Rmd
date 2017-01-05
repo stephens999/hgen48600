@@ -13,3 +13,7 @@ A collection of short vignettes describing fundamental ideas from lecture live [
 ## Sebastian Pott Data
 
 *  [Simple Markov Exercise](potts_1.html)
+
+## CCR5 data
+
+*  [Some basic calculations with the data](ccr5.html)
