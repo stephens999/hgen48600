@@ -6,31 +6,9 @@ title: "Home"
 
 **Code version:** `r system("git log -1 --format='%H'", intern = TRUE)`
 
-## Lecture Notes
-
-*   [Lecture 1](../docs/lec1.pdf): Review of Probability 
-*   [Lecture 2](../docs/lec2.pdf): Intro to Graphical Models
-*   [Lecture 3](../docs/lec3.pdf): Likelihood-based Inference
-*   [Lecture 4](../docs/lec4.pdf): Mixture Models
-*   [Lecture 5](../docs/lec5.pdf): Intro to Bayesian Inference
-*   [Lecture 6](../docs/lec6.pdf): Discrete Markov Chains
-*   [Lecture 7](../docs/lec7.pdf): MCMC
-*   Lecture 8 - Discussion: [Structure Paper](http://stephenslab.uchicago.edu/assets/papers/Pritchard2000a.pdf)
-*   [Lecture 9](../docs/lec9.pdf): Poisson Process
-*   [Lecture 10](../docs/lec10.pdf): Hidden Markov Models
-*   [Lecture 11](../docs/lec11.pdf): Continuous Time Markov Processes
-*   [Lecture 12](../docs/lec12.pdf): MCMC in practice
-*   Lecture 13 - Discussion: [Phylogentic Inference](http://www.ncbi.nlm.nih.gov/pubmed/11318142)
-*   [Lecture 14](../docs/lec14.pdf): Multivariate Normal, Intro to Gaussian Processes
-*   [Lecture 15](../docs/lec15.pdf): Factor models, Brownian Motion
-*   Lecture 16 - Discussion: [SCAT paper](http://stephenslab.uchicago.edu/assets/papers/Wasser2004.pdf)
-*   [Lecture 17](../docs/lec17.pdf): Undirected Graphical Models 
-
-A pdf with the complete set of lectures notes can be found [here](../docs/all_lectures.pdf).
-
 ## fiveMinuteStats
 
-A collection of short vignettes describing fundamental ideas from lecture live [here](http://stephens999.github.io/fiveMinuteStats/analysis/). 
+A collection of short vignettes describing fundamental ideas from lecture live [here](http://stephens999.github.io/fiveMinuteStats/).
 
 ## Sebastian Pott Data
 

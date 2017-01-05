@@ -10,14 +10,15 @@
 
 
 
+
 <title>Home</title>
 
-<script src="libs/jquery-1.11.0/jquery.min.js"></script>
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="libs/bootstrap-3.3.1/css/united.min.css" rel="stylesheet" />
-<script src="libs/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="libs/bootstrap-3.3.1/shim/respond.min.js"></script>
+<link href="libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 
 <style type="text/css">
 
@@ -74,6 +75,34 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 
 
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
 </head>
 
 <body>
@@ -88,12 +117,34 @@ code {
   color: inherit;
   background-color: rgba(0, 0, 0, 0.04);
 }
-img { 
-  max-width:100%; 
-  height: auto; 
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
 }
 </style>
+
+
 <div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
 
 
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -116,47 +167,27 @@ img {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div id="header">
-<h1 class="title">Home</h1>
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Home</h1>
+
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#lecture-notes">Lecture Notes</a></li>
 <li><a href="#fiveminutestats">fiveMinuteStats</a></li>
 <li><a href="#sebastian-pott-data">Sebastian Pott Data</a></li>
 <li><a href="#ccr5-data">CCR5 data</a></li>
 </ul>
 </div>
 
-<p><strong>Last updated:</strong> 2016-03-24</p>
-<p><strong>Code version:</strong> d116831eea8146515e990d8c5f7e0460c1ff1525</p>
-<div id="lecture-notes" class="section level2">
-<h2>Lecture Notes</h2>
-<ul>
-<li><a href="../docs/lec1.pdf">Lecture 1</a>: Review of Probability</li>
-<li><a href="../docs/lec2.pdf">Lecture 2</a>: Intro to Graphical Models</li>
-<li><a href="../docs/lec3.pdf">Lecture 3</a>: Likelihood-based Inference</li>
-<li><a href="../docs/lec4.pdf">Lecture 4</a>: Mixture Models</li>
-<li><a href="../docs/lec5.pdf">Lecture 5</a>: Intro to Bayesian Inference</li>
-<li><a href="../docs/lec6.pdf">Lecture 6</a>: Discrete Markov Chains</li>
-<li><a href="../docs/lec7.pdf">Lecture 7</a>: MCMC</li>
-<li>Lecture 8 - Discussion: <a href="http://stephenslab.uchicago.edu/assets/papers/Pritchard2000a.pdf">Structure Paper</a></li>
-<li><a href="../docs/lec9.pdf">Lecture 9</a>: Poisson Process</li>
-<li><a href="../docs/lec10.pdf">Lecture 10</a>: Hidden Markov Models</li>
-<li><a href="../docs/lec11.pdf">Lecture 11</a>: Continuous Time Markov Processes</li>
-<li><a href="../docs/lec12.pdf">Lecture 12</a>: MCMC in practice</li>
-<li>Lecture 13 - Discussion: <a href="http://www.ncbi.nlm.nih.gov/pubmed/11318142">Phylogentic Inference</a></li>
-<li><a href="../docs/lec14.pdf">Lecture 14</a>: Multivariate Normal, Intro to Gaussian Processes</li>
-<li><a href="../docs/lec15.pdf">Lecture 15</a>: Factor models, Brownian Motion</li>
-<li>Lecture 16 - Discussion: <a href="http://stephenslab.uchicago.edu/assets/papers/Wasser2004.pdf">SCAT paper</a></li>
-<li><a href="../docs/lec17.pdf">Lecture 17</a>: Undirected Graphical Models</li>
-</ul>
-<p>A pdf with the complete set of lectures notes can be found <a href="../docs/all_lectures.pdf">here</a>.</p>
-</div>
+<p><strong>Last updated:</strong> 2017-01-04</p>
+<p><strong>Code version:</strong> 7a6f6e5e781305cceda3c0e016e84e58ffa1f446</p>
 <div id="fiveminutestats" class="section level2">
 <h2>fiveMinuteStats</h2>
-<p>A collection of short vignettes describing fundamental ideas from lecture live <a href="http://stephens999.github.io/fiveMinuteStats/analysis/">here</a>.</p>
+<p>A collection of short vignettes describing fundamental ideas from lecture live <a href="http://stephens999.github.io/fiveMinuteStats/">here</a>.</p>
 </div>
 <div id="sebastian-pott-data" class="section level2">
 <h2>Sebastian Pott Data</h2>
@@ -196,6 +227,8 @@ $(document).ready(function () {
 });
 
 </script>
+
+
 
 </div>
 
