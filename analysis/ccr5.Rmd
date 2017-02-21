@@ -32,7 +32,7 @@ hist(geo.dist)
 
 # Deal with 0 counts
 
-Some of the frequency estimates are 0. I deal with this 
+Some of the frequency estimates are 0. I deal with this
 by first working out the original counts (frequency * samplesize *2),
 and then adding a pseudocount to each allele before recomputing frequencies.
 The resulting column "fhat" can be transformed by log(fhat/(1-fhat))
