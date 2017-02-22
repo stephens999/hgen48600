@@ -202,7 +202,7 @@ ccr5[,1] = ifelse(ccr5[,1]&gt;180,ccr5[,1]-360,ccr5[,1]) # changes longitudes&gt
 <p>This can be done using the geosphere package. Dividing by 1000 gives distance in km.</p>
 <pre class="r"><code>geo.dist = geosphere::distm(ccr5[,1:2])/1000
 hist(geo.dist)</code></pre>
-<p><img src="figure/ccr5.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ccr5_pluscode.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="deal-with-0-counts" class="section level1">
 <h1>Deal with 0 counts</h1>
@@ -211,14 +211,54 @@ hist(geo.dist)</code></pre>
 ccr5$fhat = (ccr5$count+1)/(ccr5$SampleSize*2+2)
 ccr5$Z = log(ccr5$fhat/(1-ccr5$fhat))
 hist(ccr5$Z)</code></pre>
-<p><img src="figure/ccr5.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ccr5_pluscode.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="similarity-of-allele-frequency-with-distance" class="section level1">
 <h1>Similarity of allele frequency with distance?</h1>
 <p>Here we take a quick look to check that Z has some kind of spatial trend.</p>
 <pre class="r"><code>plot(x=ccr5$Lat,y=ccr5$Long,type=&quot;n&quot;)
 text(round(ccr5$Z),x=ccr5$Lat,y=ccr5$Long)</code></pre>
-<p><img src="figure/ccr5.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ccr5_pluscode.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>my_sigma = function(a,d){
+  a[1] * exp(-(d/a[2])^2)
+  }
+
+llik = function(t){
+  -mvtnorm::dmvnorm(ccr5$Z,mean = rep(t[1],length(ccr5$Z)), sigma=my_sigma(t[-1],geo.dist),log=TRUE)
+}
+
+optim(c(-2,1,100),llik)</code></pre>
+<pre><code>$par
+[1]  -2.720284   0.549599 146.573119
+
+$value
+[1] 72.99366
+
+$counts
+function gradient 
+     140       NA 
+
+$convergence
+[1] 0
+
+$message
+NULL</code></pre>
+<pre class="r"><code>optim(c(-3,2,200),llik)</code></pre>
+<pre><code>$par
+[1]  -2.7201491   0.5495102 146.5796508
+
+$value
+[1] 72.99366
+
+$counts
+function gradient 
+     148       NA 
+
+$convergence
+[1] 0
+
+$message
+NULL</code></pre>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
@@ -236,10 +276,11 @@ other attached packages:
 [1] knitr_1.15.1
 
 loaded via a namespace (and not attached):
- [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   tools_3.3.2    
- [5] htmltools_0.3.5 sp_1.2-3        yaml_2.1.14     geosphere_1.5-5
- [9] Rcpp_0.12.9     stringi_1.1.2   rmarkdown_1.3   grid_3.3.2     
-[13] stringr_1.1.0   digest_0.6.12   lattice_0.20-34 evaluate_0.10  </code></pre>
+ [1] Rcpp_0.12.9     lattice_0.20-34 mvtnorm_1.0-5   digest_0.6.12  
+ [5] rprojroot_1.2   grid_3.3.2      backports_1.0.5 magrittr_1.5   
+ [9] evaluate_0.10   stringi_1.1.2   geosphere_1.5-5 sp_1.2-3       
+[13] rmarkdown_1.3   tools_3.3.2     stringr_1.1.0   yaml_2.1.14    
+[17] htmltools_0.3.5</code></pre>
 </div>
 </div>
 
