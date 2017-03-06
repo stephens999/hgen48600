@@ -2,10 +2,6 @@
 title: "License"
 ---
 
-**Last updated:** `r Sys.Date()`
-
-**Code version:** `r system("git log -1 --format='%H'", intern = TRUE)`
-
 ## Code
 
 The code is licensed under the [GPLv3][code-license].
