@@ -2,8 +2,8 @@
 .Rproj.user
 .R*
 .Rhistory
-*html
-*png
+analysis/*html
+analysis/figure
 data
 analysis/rda
 *aux
