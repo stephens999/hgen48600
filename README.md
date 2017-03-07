@@ -2,7 +2,9 @@
 
 See the [site][] to view the results.
 
-See the [John Blischak's contributing guidelines][contrib] for some tips on workflow management.
+The content on this site is managed with the R package [workflowr][]. See the
+[documentation][docs] to learn how to create new analyses and build the site.
 
 [site]: http://stephens999.github.io/hgen48600/
-[contrib]: https://github.com/jdblischak/singleCellSeq/blob/master/CONTRIBUTING.md
+[workflowr]: https://github.com/jdblischak/workflowr
+[docs]: https://jdblischak.github.io/workflowr/
