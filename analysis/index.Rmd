@@ -2,10 +2,6 @@
 title: "Home"
 ---
 
-**Last updated:** `r Sys.Date()`
-
-**Code version:** `r system("git log -1 --format='%H'", intern = TRUE)`
-
 ## fiveMinuteStats
 
 A collection of short vignettes describing fundamental ideas from lecture live [here](http://stephens999.github.io/fiveMinuteStats/).
