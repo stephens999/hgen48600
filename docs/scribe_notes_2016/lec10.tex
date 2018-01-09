@@ -1,0 +1,236 @@
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
+\usepackage{tikz}
+\usetikzlibrary{fit,positioning}
+\begin{document}
+
+\scribe{Chris Stamper}		% required
+\lecturenumber{10}			% required, must be a number
+\lecturedate{February 4}		% required, omit year
+\lecturer{John Novembre} 
+
+\maketitle
+
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+
+
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
+
+
+\section{Hidden Markov Models}
+
+\subsection{Hidden Markov Models Introduction}
+Hidden Markov Models have a variety of applications and are widley used in many disparate fields. One common application is their use
+in speech recognition. (Please see Lawrence Rabiner's 'A Tutorial on Hidden Markov Models and Selected Applications in Speech Recognition')
+
+\subsection{Uses of Hidden Markov Models}
+Hidden Markov Models are perfect for an underlying Markov Model with noisy data.
+\vspace{10 mm}
+\newcommand{\HMM}[1][]{
+	\begin{tikzpicture}[#1]
+	\centering
+	\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 12mm]
+	\tikzstyle{connect}=[-latex, thick]
+	\node[main, fill = white!100] (Q1) [label=below:$Q_1$] { };
+	\node[main] (Q2) [right=of Q1,label=below:$Q_2$] { };
+	\node[main] (Q3) [right=of Q2,label=below:$Q_3$] { };
+	\node[main] (Q4) [right=of Q3,label=below:$Q_4$] { };
+	\node[main, fill = black!10] (O1) [above=of Q1,label=left:$O_1$] { };
+	\node[main, fill = black!10] (O2) [above=of Q2,label=left:$O_2$] { };
+	\node[main, fill = black!10] (O3) [above=of Q3,label=left:$O_3$] { };
+	\node[main, fill = black!10] (O4) [above=of Q4,label=left:$O_4$] { };
+	\path (Q1) edge [connect] (Q2)
+        (Q2) edge [connect] (Q3)
+        (Q3) edge [connect] (Q4)
+        (Q1) edge [connect] (O1)
+        (Q2) edge [connect] (O2)
+        (Q3) edge [connect] (O3)
+        (Q4) edge [connect] (O4);
+	\end{tikzpicture}}
+
+\HMM{}
+\vspace{10 mm}
+
+Meaning that if one conditioned on $Q_3$ the observation would only depend on it and nothing else.
+
+\subsection{Basic Structure of Hidden Markov Models}
+
+The basic structure of a Hidden Markov Model is:
+
+\begin{itemize}
+	\item A Transition Probability Matrix: ($A=\{a_{ij}, i=1, ...N, j=1 ...N\}$) with
+	\vspace{5 mm}
+	\begin{equation}
+	a_ij = P(q_t+1 = S_j |q_t = S_i), \hspace {3 mm} 1 \leq i,j \leq N, 1 \leq t \leq T - 1.
+	\end{equation}
+	\item An Emission Probability Matrix: $B_{NXM}$ is a matrix with all $b_j(i)$
+	\vspace{5 mm}
+	\begin{equation}
+	P(O_t = i|Q_t=j)=b_j(i), \hspace {3 mm} 1 \leq j \leq N, 1 \leq i \leq M, 1 \leq t \leq T.
+	\end{equation}
+	\item An Initial State Distribution: $\pi = \{\pi_i, i=1 ..., N\}$ or with
+	\vspace{5 mm}
+	\begin{equation}
+	\pi_i = P(q_1 = S_i), \hspace {3 mm} 1 \leq i \leq N.
+	\end{equation}
+\end{itemize}
+
+\vspace {5 mm}
+
+Which means there are three main problems for Hidden Markov Models.
+\begin{enumerate}
+ \item $P(O|\lambda)$: How do we compute efficiently?
+ \item Given $O$ and $\lambda$, what is the most probable sequence, $Q$.
+ \item How can we estimate $\lambda$? AKA How can we find a $rp_{max} \lambda P(O|\lambda)$?
+\end{enumerate}
+
+\section{Algorithms for solving the problmes of Hidden Markov Models}
+
+\subsection{Forward Algorithm}
+
+For problem 1 of HMMs we need a way to solve
+\[P(O|\lambda) = \sum_Q P(O, Q|\lambda)\]
+
+\vspace {5 mm}
+
+Which we can accomplish by using the forward algorithm. 
+\begin{itemize}
+	\item Initialize
+	\begin{equation}
+	\alpha_1(i) = \pi_ib_i(O_1) = P (O, Q_1)
+	\end{equation} 
+	\item Induction
+	\begin{equation}
+	\alpha_{t+1}(j) = [\sum_{i=1}^N \alpha_t(i)a_{ij}]b_j(O_{t+1}), \hspace{3 mm} 1 \leq t \leq T-1 \hspace{2 mm} and \hspace{2 mm} 1 \leq j \leq N
+	\end{equation}
+	\item Termination
+	\begin{equation}
+	P(O|\lambda) = \sum_j\alpha_T(j)	
+	\end{equation}
+\end{itemize}
+
+\subsection{Viterbi Algorithm}
+
+For Problem 2 we need a way for the argmax of $P(O,Q|\lambda)$. In other words we need a way to consider all possible $Q$ and find the $Q$ that is maximal.
+
+\newcommand{\latice}[2][]{
+	\begin{tikzpicture}[#2]
+	\centering
+	\tikzstyle{main}=[circle, minimum size = 6mm, node distance = 5mm]
+	\tikzstyle{connect}=[-latex, thin]
+	\node[main, fill = black!100] (1) [label=left:$1$] { };
+	\node[main, fill = black!100] (2) [below=of 1,label=left:$2$] { };
+	\node[main, fill = black!100] (3) [below=of 2,label=left:$3$, label=below:$t_1$] { };
+	\node[main, fill = black!100] (4) [right=of 1] { };
+	\node[main, fill = black!100] (5) [below=of 4] { };
+	\node[main, fill = black!100] (6) [below=of 5, label=below:$t_2$] { };
+	\node[main, fill = black!100] (7) [right=of 4] { };
+	\node[main, fill = black!100] (8) [below=of 7] { };
+	\node[main, fill = black!100] (9) [below=of 8, label=below:$t_3$] { };
+	\path (1) edge [connect] (6);
+	\path (2) edge [connect] (6);
+	\path (3) edge [connect] (6);
+	\path (4) edge [connect] (7);
+	\path (4) edge [connect] (9);
+	\path (4) edge [connect] (9);
+	\path (5) edge [connect] (7);
+	\path (5) edge [connect] (8);
+	\path (5) edge [connect] (9);
+	\path (6) edge [connect] (7);
+	\path (6) edge [connect] (8);
+	\path (6) edge [connect] (9);
+\end{tikzpicture}}
+
+\vspace{2 mm}
+To visualize this we can imagine a lattice graph:
+\newline
+\vspace{5 mm}
+\latice{}
+\vspace {1 mm}\\
+In which we need to take the maximum of the three paths coming from some $i$ at time 2 and going to some $j$ at time 3. \\
+
+To do this we can make use of the Viterbi Algortithm.
+\\
+In which we have:
+\begin{itemize}
+	\item An array defined as: $\psi_{t+1}j = argmax_i[\delta_t(i)a_{ij}], \hspace{3 mm} 1 \leq j \leq N, 1 \leq t \leq T-1$
+	\item An auxillary variable, $\delta$: $\delta_t(i) = max_{q_1q_2...q_{t-1}}P\{q_1,q_2,...q_{t-1}=i,O_1,O_2,...,O_{t-1}|\lambda\}$
+\end{itemize}
+Which we can use in the algortihm.
+\begin{itemize}
+	\item Initialize
+	\begin{equation}
+	\begin{split}
+	\delta_1 (i) \leftarrow \pi_ib_i(O_1), \hspace{3 mm} 1 \leq i \leq N \hspace{3 mm} \\
+	\psi_1 (i) \leftarrow 0, \hspace{3 mm} 1 \leq i \leq N \\
+	t \leftarrow 1
+	\end{split}
+	\end{equation} 
+	\item Repeat
+	\begin{equation}
+	\begin{split}
+	\psi_{t+1}(j) \leftarrow argmax_i[\delta_t(i)a_(ij)], \hspace{3 mm} 1 \leq j \leq N \\
+	\delta_{t+1}(j) \leftarrow \delta_t(\psi_{t+1}(j))a_{\psi_{t+1}(j),j}b_j(O_{t+1}), \hspace{3 mm} 1 \leq j \leq N \\
+	t \leftarrow t + 1
+	\end{split}
+	\end{equation}
+	\item Until
+	\begin{equation}
+	\begin{split}
+	t = T \\
+	P^* \leftarrow max_{1 \leq i \leq N}[\delta_T(i)] \\
+	i_T^* \leftarrow argmax_{1 \leq i \leq N}[\delta_T(i)] \\
+	\text{State Sequence Backtracking:} \\
+	q_T^* \leftarrow S_{i_T^*} \\
+	t \leftarrow T
+	\end{split}
+	\end{equation}
+	\item Repeat
+	\begin{equation}
+	\begin{split}
+	i_{t-1}^* \leftarrow \psi_t(i_t^*) \\
+	q_{t-1}^* \leftarrow S_{i_{t-1}^*} \\
+	t \leftarrow t - 1 \\
+	\text{until} \\
+	t = 1 \\
+	Q^* \leftarrow q_1^*,...q_T^*
+	\end{split}
+	\end{equation}
+\end{itemize}
+
+\subsection{Forward-Backward Algorithm}
+To solve the final problem, efficiently learning the parameters of a HMM, we can make use of a backward recursive procedure. \\
+Our goal is that we want the backward variable, $B_t(i)$, or: \\
+\vspace{3 mm}
+$B_t(i) = P(O_{t+1},...,O_T|Q_t=j,\lambda)$ \\
+\vspace{3 mm}
+such that \\ $\alpha_t(j)B_t(j) = P(O_1,...,O_T|Q_t=j,\lambda)$
+$\propto P(Q_t=j|O,\lambda)$ \\
+\vspace{3 mm}
+and \\
+\vspace{3 mm}
+$P(Q_t=j|O,\lambda) = \frac{\alpha_t(j)B_t(j)}{\sum_i\alpha_t(i)B_t(i)} = \lambda_t(j)$ \\
+
+To compute this we can use the Backwards Algorithm, AKA the Forward-Backward Algorithm:
+
+\begin{itemize}
+	\item Initialize
+	\begin{equation}
+	B_T(i)=1
+	\end{equation}
+	\item Induction
+	\begin{equation}
+	B_t(i) = \sum_{j=1}^Na_{ij}b_j(O_t)B_t(j), \hspace{3 mm} t=T-1, T-2,..., 1 \hspace{1 mm} \text{and} \hspace{1 mm} 1 \leq i \leq N
+	\end{equation}
+	\item Continue unitl
+	\begin{equation}
+	P(Q_t=j|O,\lambda) = \frac{\alpha_t(j)B_t(j)}{\sum_i\alpha_t(i)B_t(i)} = \lambda_t(j)
+	\end{equation}
+\end{itemize}
+\end{document}

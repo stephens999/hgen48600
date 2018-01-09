@@ -1,0 +1,464 @@
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
+\begin{document}
+
+\scribe{(None)}		% required
+\lecturenumber{1}			% required, must be a number
+\lecturedate{January 5}		% required, omit year
+\lecturer{John Novembre} 
+
+\maketitle
+
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+
+
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
+
+
+\section{HG48600/STAT34550 Lectures}
+\label{sec-1}
+\subsection{Lecture 1: Introduction to Course and Probability}
+\label{sec-1-1}
+\subsubsection*{Introduction}
+\label{sec-1-1-1}
+\begin{itemize}
+\item Themes of this course:
+\label{sec-1-1-1-1}
+\begin{itemize}
+\item Thinking probabilistically
+\label{sec-1-1-1-1-1}
+\begin{itemize}
+\item The systems we aim to model are inherently \textbf{stochastic}
+\item Probabilities gives us a language for expressing our uncertainy in
+precise terms (i.e. we are often going to be thinking as Bayesians)
+\end{itemize}
+\item Handling complex probability distributions
+\label{sec-1-1-1-1-2}
+\begin{itemize}
+\item Those with an index set (i.e. \textbf{stochastic processes})
+\item \textbf{Heirarchical models} with underlying \textbf{latent (hidden)} variables
+\end{itemize}
+\item Constructing custom solutions to inference problems in biology
+\label{sec-1-1-1-1-3}
+\begin{itemize}
+\item Recognizing the biological aspects of a problem and being able to build it
+into our solutions, i.e. not being beholden to fitting a problem into
+frameworks already invented
+\item That said, we will learn several general purpose models
+\end{itemize}
+\end{itemize}
+\item Broader context for this course
+\label{sec-1-1-1-2}
+\begin{itemize}
+\item We see three domains are commonly mastered by the best computational biologists.
+\label{sec-1-1-1-2-1}
+\item This course will cover 2 of them at an introductory level: Stochastic processes and inference in complex, heirarchical models.
+\label{sec-1-1-1-2-2}
+\item The third domain will be the subject of a course that will be taught next year: Computational data structures and algorithms.
+\label{sec-1-1-1-2-3}
+\end{itemize}
+\end{itemize}
+\subsubsection*{Course expectations}
+\label{sec-1-1-2}
+\begin{itemize}
+\item Problem Sets
+\label{sec-1-1-2-1}
+\begin{itemize}
+\item 5 total: You will have at least 1 week to complete them
+\label{sec-1-1-2-1-1}
+\end{itemize}
+\item Final project
+\label{sec-1-1-2-2}
+\begin{itemize}
+\item Do something interesting leveraging the concepts of this course
+\item Use ideas from this course to address a small problem in an area of biology that interests you (need not be your PhD research area)
+\item Develop a teaching vignette / lab for a subject area of this course
+\item Poster Session on the last day of class
+\end{itemize}
+\item Scribe duty:
+\label{sec-1-1-2-3}
+\begin{itemize}
+\item You will take notes, most likely on pen and paper.
+\item After class you will write them up via latex (or markdown) and post.
+\item Please sign up with Evan.
+\end{itemize}
+\end{itemize}
+\subsubsection*{Review: Marginal, Joint, and Conditional distributions, Bayes Rule}
+\label{sec-1-1-3}
+\begin{itemize}
+\item Motivation
+\label{sec-1-1-3-1}
+\begin{itemize}
+\item Most problems we work on involve multiple random variables.
+\item To think about multiple random variables at a time it is useful to understand \textbf{joint}, \textbf{marginal} and \textbf{conditional}
+  distributions.  There are also analogous forms for expectations, variances, and covariances.
+\end{itemize}
+\item Example: A basic two-variable discrete joint probability distribution
+\label{sec-1-1-3-2}
+\begin{itemize}
+\item Example 1
+\label{sec-1-1-3-2-1}
+
+\begin{center}
+\begin{tabular}{lrrr}
+\hline
+X|Y & $Y=1$ & $Y=2$ & $P(X=x)$\\
+\hline
+$X=0$ & 0.08 & 0.12 & 0.2\\
+$X=1$ & 0.16 & 0.24 & 0.4\\
+$X=2$ & 0.12 & 0.18 & 0.3\\
+$X=3$ & 0.04 & 0.06 & 0.1\\
+ &  &  & \\
+\hline
+$P(Y=y)$ & 0.4 & 0.6 & \\
+\hline
+\end{tabular}
+\end{center}
+\end{itemize}
+\item Conditional probability and independence:
+\label{sec-1-1-3-3}
+\begin{itemize}
+\item The basic definition
+\label{sec-1-1-3-3-1}
+$$P(B|A) = \frac{P(A,B)}{P(A)}$$
+Note: Trivially generalizes for talking about discrete or continuous random variables.\\
+Also note: we like to replace the formal notation $P(A=a)$ by $P(A)$. 
+\item Independence
+\label{sec-1-1-3-3-2}
+\begin{itemize}
+\item Two events A,B are said to be indepdent if $P(A,B)=P(A)P(B)$
+\item Note from def of conditional probablity this implies: $P(B|A)=P(B)$ (and $P(A|B)=P(A)$)
+\item A big theme of the course will be leveraging conditional probabilities and
+independence to solve problems.
+\end{itemize}
+\item Marignal distributions and the law of total probability:
+\label{sec-1-1-3-3-3}
+We can "marginalize" by a summation operation:
+$$P(A=a)= \sum_{b:P(B=b)>0} P(A=a,B=b)$$ or $$P(A=a)=\sum_{b:P(B=b)>0}
+P(A=a|B=b)P(B=b)$$ or in shorthand $$P(A)=\sum P(A|B)P(B)$$
+Note: As is often the case, the analogous form for continous random variables
+replaces the summation step with integration.
+\end{itemize}
+\item Bayes' rule
+\label{sec-1-1-3-4}
+$$P(A|B)=\frac{P(B|A)P(A)}{P(B)}$$
+This has tremendous utility as a tool for taking one conditional probablity
+($P(B|A)$) and computing it's "inverse" $P(A|B)$.  It also has great utility for
+inference problems and shows up in the following form.  (Matthew will expand on this latter point)
+$$P(\theta|X)=\frac{P(X|\theta)P(\theta)}{P(X)}=frac{P(X|\theta)P(\theta)}{\int P(X|theta)P(\theta)d\theta} $$
+Where, $X$ are some data, and $\theta$ are the parameters of our model.
+\end{itemize}
+
+\subsubsection*{Review: Introduction to Random Variables}
+\label{sec-1-1-4}
+\begin{itemize}
+\item Basic definitions:
+\label{sec-1-1-4-1}
+\begin{itemize}
+\item $\Omega$ : The sample space; points in $\Omega$ represent \textbf{elementary events}
+\item Probability:
+\begin{itemize}
+\item A function that ascribes a measure to each point (and subset of points)
+in the sample space, with the important property that the integral of the measure over $\Omega$ equals 1.
+\item Interpretations: The frequency at which an event will occur, a measure of uncertainty
+\end{itemize}
+\item Random variables : Real-valued function over the elementary events in the sample space.
+\begin{itemize}
+\item Example: $X$ is the sum of two fair die.
+\begin{itemize}
+\item $X=2$ if the first die is 1 and the second is 1.
+\end{itemize}
+\item Example: An \textbf{indicator variable} for whether a single die is even.
+\begin{itemize}
+\item $I_{odd}=1$ if die role is single die role is 2, 4, 6; and 0 otherwise.
+\end{itemize}
+\item Probabilities can be assigned to the values of random variables
+\item Typically we think at the level of random variables and probability
+distributions/densities (and ignore the more formal construction of the
+sample space and measure definitions)
+\end{itemize}
+\end{itemize}
+\item Basic Discrete Random Variables:
+\label{sec-1-1-4-2}
+\begin{center}
+\begin{tabular}{lllll}
+\hline
+Name & parameters & probability mass function & Mean & Variance\\
+\hline
+Binomial & $n>0$ and $0\leq p\leq 1$ & $\binom{n}{x} p^x (1-p)^x$ & $np$ & $np(1-p)$\\
+Poisson & $\lambda >0$ & $e^{-\lambda}\frac{\lambda^x}{x!}$ & $\lambda$ & $\lambda$\\
+Geometric & $0\leq p\leq 1$ & $p(1-p)^{x-1}$ & $\frac{1}{p}$ & $\frac{1-p}{p^2}$\\
+\hline
+\end{tabular}
+\end{center}
+See Ross Table 2.1
+\item Basic Continuous Random Variables:
+\label{sec-1-1-4-3}
+\begin{center}
+\begin{tabular}{lllll}
+\hline
+Name & parameters & probability density function & Mean & Variance\\
+\hline
+Uniform & a,b & $\frac{1}{b-a}$ for $a<x<b$ & $\frac{a+b}{2}$ & $\frac{(b-a)^2}{12}$\\
+Exponential & $\lambda>0$ & $\lambda e^{-\lambda x}$ for $x>0$ & $\frac{1}{\lambda}$ & $\frac{1}{\lambda^2}$\\
+Gamma & n>0,$\lambda>0$ & $\frac{\lambda e^{-\lambda x}(\lambda x)^{n-1}}{(n-1)!}$ for $x\geq 0$ & $\frac{n}{\lambda}$ & $\frac{n}{\lambda^2}$\\
+Normal & $\mu$, $\sigma^2>0$ & $\frac{1}{\sqrt{2\pi}\sigma}e^{\frac{-(x-\mu)^2}{2\sigma^2}}$ & $\mu$ & $\sigma^2$\\
+Beta & $\alpha>0$,$\beta>0$ & $\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1}(1-x)^{\beta-1}$ & $\frac{\alpha}{\alpha+\beta}$ & $\frac{\alpha \beta}{(\alpha+\beta)^2 (\alpha+\beta+1)}$\\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item Note: See Ross Table 2.2
+\end{itemize}
+\item Additional random variable distribution that will be of interest for this course
+\label{sec-1-1-4-4}
+\begin{itemize}
+\item Distributions of the exponential family, in particular:
+\begin{itemize}
+\item Multinomial distribution
+\item Dirichlet distribution (a multivariate analog of the beta)
+\item Multivariate Normal distribution
+\end{itemize}
+\end{itemize}
+\item Definition of a stochastic process
+\label{sec-1-1-4-5}
+\begin{itemize}
+\item We will spend a large amount of our time thinking about a special collection
+of random variables known as a \textbf{stochastic process}
+\item A stochastic process is a set: ${X(t),t\in T}$
+\item $X(t)$ as the \textbf{state} of the system at time $t$.
+\item $T$ as the \textbf{index set} of the process. $t$ often interpreted as time variable or
+a spatial variable.
+\item \textbf{State space} : The set of possible values of $X(t)$
+\item Stochastic processes are a family of random variables that describe the evolution
+through time of some (physical) process.
+\item We will use stochastic processes as models for biological processes, and as a
+trick to simulate from intractable distributions (this is the idea of MCMC and Gibbs sampling).
+\end{itemize}
+\end{itemize}
+\subsubsection*{Review: Expectation, Variances, Covariances}
+\label{sec-1-1-5}
+\begin{itemize}
+\item Definition of Expectation
+\label{sec-1-1-5-1}
+\begin{itemize}
+\item Discrete case:
+\label{sec-1-1-5-1-1}
+$$E[X]=\sum_{x:p(x)>0} x p(x)$$
+\item Continous case:
+\label{sec-1-1-5-1-2}
+$$E[X]=\int_{-\infty}^{\infty}x f(x) dx $$
+\item Expectations of functions
+\label{sec-1-1-5-1-3}
+\begin{itemize}
+\item g(X) is itself a random variable.
+\item In simple cases, $E[g(X)]$ can be computed
+from $E[X]$.  For example:
+\begin{itemize}
+\item $E[aX+b]=aE[X]+b$
+\end{itemize}
+\item In more complicated cases we would have to compute the integral $\int g(x)f(x)dx$, or the discrete analog.
+\end{itemize}
+\item Another way to calculate expectations:
+$$ E[X] = \int^{\infty}_0[-F(-x)+(1-F(x))]$$
+\end{itemize}
+\item Definition of variance
+\label{sec-1-1-5-2}
+$$ Var(X)=E[(X-E[X])^2]=E[X^2]-E[X]^2$$
+\item Definition of covariance
+\label{sec-1-1-5-3}
+\begin{itemize}
+\item Definition$$ Cov(X,Y)=E[(X-E[X])(Y-E[Y])]=E[XY]-E[X]E[Y]$$
+\item If X,Y are independent, covariance equals 0.
+\item Useful result: $$Var(aX+bY+c)=a^2 Var(X)+b^2 Var(Y)+2ab Cov(X,Y)$$
+\end{itemize}
+\end{itemize}
+\subsubsection*{The Law of Large Numbers and introduction to Monte Carlo}
+\label{sec-1-1-6}
+\begin{itemize}
+\item \textbf{The Strong Law of Large Numbers}: Let $X_1, X_2, \ldots$ be a sequence of
+independent, identically distributed variables, and let $E[X_i]=\mu$ (where
+$\mu$ is finite).  Then, $$P(lim_{n \to \infty}
+  \frac{X_1+X_2+\ldots+X_n}{n} = \mu) =1 $$
+\item This result forms the basis of "vanilla" Monte Carlo estimators:
+\begin{itemize}
+\item For expectations: $$E[g(X)] \approx \frac{1}{M}\sum_{i=1}^M g(x_i) $$ where $x_i \sim f_X(\cdot)$
+\item For probabilities (using indicator functions): $$P(X=x)=E[I_{X=x}] \approx
+    \frac{1}{M}\sum_{i=1}^M I_{X=x}(x_i)$$ where $x_i \sim f_X(\cdot)$
+\item Thus by being able to simulate instances of a random variable $X$ we can
+compute probabilities of events dependent on $X$ as well as computing
+expectations that require integrating over all possible values of $X$.
+\item This "Monte Carlo" strategy is a workhorse of modern computational
+statistics.  It also has many variants, several of which we'll learn about in
+the course (e.g. Gibbs, MCMC).
+\end{itemize}
+\end{itemize}
+
+\subsubsection*{Conditional expectations and variances}
+\label{sec-1-1-7}
+\begin{itemize}
+\item Definition of Conditional Expectation
+\label{sec-1-1-7-1}
+\begin{itemize}
+\item Discrete case:
+\label{sec-1-1-7-1-1}
+$$E[X|Y=y] = \sum_x x P(X=x|Y=y) = \sum_x x p_{X|Y}(x|y)$$
+where $p_{X|Y}(x|y) = p(x,y)/p_Y(y)$
+\item Continuous case:
+\label{sec-1-1-7-1-2}
+$$E[X|Y=y] = \int_{\infty}^{\infty} x f_{X|Y}(x|y)dx $$
+where $f_{X|Y}(x|y) = f(x,y)/f_Y(y)$.
+\item Note:
+\label{sec-1-1-7-1-3}
+\begin{itemize}
+\item Simple, it's just an expectation over a conditional distribution/density function.
+\item And note, $E[X|Y=y]$ is a random variable that is a function of y.  Thus we can
+compute it's expectation:  $E[E[X|Y]]$. This turns out to be very useful\ldots{}
+\end{itemize}
+\end{itemize}
+\item Computing Expectations, Variances and Probabilities by Conditioning
+\label{sec-1-1-7-2}
+\begin{itemize}
+\item Computing expectations of conditional expectations gives us a new route to computing an expectation 
+(\textbf{Law of total expectation}): 
+$$E[X]= E[E[X|Y]]$$
+\label{sec-1-1-7-2-1}
+\item We can also compute variances (\textbf{Law of total variance}): $$Var(X)=E[Var(X|Y)]+Var(E[X|Y])$$
+\label{sec-1-1-7-2-2}
+\item And for computing probabilities (using indicator variables)
+$$
+I_E=
+\begin{cases}
+1 & \text{E happens}\\
+0 & \text{otherwise}
+\end{cases}
+$$
+$$
+E[I_E]=1P(I_E=1) + 0P(I_E=0)=P(E)
+$$
+\label{sec-1-1-7-2-3}
+\end{itemize}
+\item Examples of using conditioning to compute probabilites:
+\label{sec-1-1-7-3}
+\begin{itemize}
+\item Ross Example 3.10 and 3.19 : Mean and Variance of a Compound Variable
+\label{sec-1-1-7-3-1}
+\item Example 3.10: Expected number of accidents in a week is 4 and the number of  workers injured in each accident is an indpt RV with mean 2. What is the  number of expected injuries during a week?
+\label{sec-1-1-7-3-1-1}
+
+
+
+Solution:
+Let $N$ denote the number of accidents, and $X_i$ the number injuries per
+accident.  Our interest is: $$E[\sum_1^N X_i]=E[E[\sum_1^N X_i|N]]$$
+Note: $$E[\sum_i^n X_i|N=n]=E[\sum_1^n X_i] = nE[X]$$ and then plugging in
+get: $$E[E[\sum_1^n X_i|N]]=E[nE[X]]=E[N]E[X]$$
+This is kind of obvious but now we've been rigorous about it.  More
+interestingly, what about the variance?
+
+
+\item Example 3.19: Let $S$ be the compound variable $\sum_1^N X_i$.  Find the variance.  Let $Var(X)=\sigma^2$ and $E[X]=\mu$.  We'll use the conditional variance formula.
+\label{sec-1-1-7-3-1-2}
+
+Solution:
+$$Var(S)=E[Var(S|N)]+Var(E[S|N])$$
+
+First term: 
+$$Var(S|N=n)=Var(\sum_{i=1}^n X_i)=n\sigma^2$$
+$$E[Var(S|N)]=E[N]\sigma^2$$
+
+Second term:
+$$E[S|N]=n\mu$$
+$Var(E[S|N])$ then equals $\mu^2 Var(N)$
+
+So we have: Var(S)=$\sigma$$^{\text{2}}$ E[N]+$\mu$$^{\text{2}}$ Var(N).
+In special case where $N$ is Poisson($\lambda)$ we
+have:$$Var(S)=\lambda\sigma^2+\lambda \mu^2$$ which note has the
+simplification: $\lambda E[X^2]$.
+
+\end{itemize}
+\end{itemize}
+
+\subsubsection*{Conclusions for the day}
+\label{sec-1-1-8}
+\begin{itemize}
+\item For working on probablity problems\ldots{}
+\label{sec-1-1-8-1}
+\begin{itemize}
+\item Conditioning often helps
+\label{sec-1-1-8-1-1}
+\item Use indicator variables to your advantage
+\label{sec-1-1-8-1-2}
+\item Train yourself to recognize probablity distributions when they appear (as in Example 3.23 with the Poissons appear)
+\label{sec-1-1-8-1-3}
+\item Sometimes its useful to remember distributions sum (or integrate to 1) (see Ross 3.22 for an example with a Gamma that appears in the simplified form).
+\label{sec-1-1-8-1-4}
+\item Use tools from "real analysis":
+\label{sec-1-1-8-1-5}
+\begin{itemize}
+\item Recognize that many ugly looking sum's or integrals have analytic solutions ( e.g. see Example 3.25 or section 3.63). Mathematica can help recognize these
+\label{sec-1-1-8-1-5-1}
+\item Proofs using induction are often needed.  Similarly, recursive formulas often arise and can be solved (Example 3.26).
+\label{sec-1-1-8-1-5-2}
+\end{itemize}
+\item Advanced:
+\label{sec-1-1-8-1-6}
+\begin{itemize}
+\item Using probablistic inequalities to form bounds
+\item Using moment generating functions and characteristic functions for solving
+problems with sums of random variables
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\subsubsection*{Miscellaneous Review}
+\label{sec-1-1-9}
+\begin{itemize}
+\item Cumulative distribution functions and density functions
+\label{sec-1-1-9-1}
+\begin{itemize}
+\item Cumulative distribution function: $F(b) = P(X<=b)$
+\label{sec-1-1-9-1-1}
+\begin{itemize}
+\item F(b) is non-decreasing in b
+\item $\lim$$_{\text{b }\to\ \infty}$ = F($\infty$) = 1
+\item $\lim$$_{\text{b }\to\ \infty}$ = F(-$\infty$) = 0
+\item CDF's take the form of step functions for discrete RVs
+\item For continuous RV's
+\begin{itemize}
+\item $F(a)= P(X \in (\infty,a)) = \int_{-\infty}^a f(x) dx$
+\item $\frac{d}{da} F(a) = f(a)$, ie density is the derivative of the cdf
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\item Definition of Covariance
+\label{sec-1-1-9-2}
+$$E[X,Y]=E[XY]-E[X]E[Y]$$
+Properties of covariance:
+\begin{itemize}
+\item $Cov(X,X)=Var(X)$
+\item $Cov(X,Y)=Cov(Y,X)$
+\item $Cov(cX,Y)=cCov(X,Y)$
+\item $Cov(X,Y+Z)= Cov(X,Y)+Cov(X,Z)$
+\end{itemize}
+\item The \textbf{Chain Rule}
+\label{sec-1-1-9-3}
+\begin{itemize}
+\item In its basic form:
+\label{sec-1-1-9-3-1}
+$$P(A,B) = P(B|A)P(A)$$
+\item Which generalizes as:
+\label{sec-1-1-9-3-2}
+$$P(A_1,A_2,\ldots,A_k)=P(A_1)P(A_2|A_1)\ldots P(A_k|A_{k-1})$$
+\item This result holds regardless of the ordering.
+\label{sec-1-1-9-3-3}
+\end{itemize}
+\end{itemize}
+
+\end{document}
+

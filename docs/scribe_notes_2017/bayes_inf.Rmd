@@ -1,0 +1,106 @@
+---
+title: "Bayesian Inference"
+author: "Dayana Delgado"
+date: "2/2/2017"
+output:
+  pdf_document: default
+---
+#Bayesian Inference
+
+
+In the simplest case we can use bayesian inference to compare two models. The key idea is we combine information in data with information we may have from external sources. Information from external sources is refered to as our "prior"  and is what we now before we see the data. By combining our data (likelihood) with the prior distribution - we get the posterior distribution, which represents what we know after we see the data.  
+
+The FUNDAMENTAL IDEA of bayesian inference is we are using probability to represent uncertainty.  
+This is a more general notion than the idea of using probabiltiy to represent randomess because randomness creates uncerrtainty - but there are other sources of uncertainty (things don't necessarily need to be random in other for there to be uncertainty).
+
+The bayesian perspective is that if you're uncertain about something then the way to present that uncertainity is to use probability. Probability, among other methods, is the most reliable in that in won't lead to paradoxes, meaning that there is coherence. Coherence is this case means that there isn't contradiction in the uncertainties.
+
+The mechanism by which we actually apply this idea of representing uncertainity with probability is through bayes theorem:
+
+$$P(A|B) = \frac {P(B|A)P(A)} {P(A)},$$
+where $A$ is whatever we are uncertain about and B is our data. We can better represent this in this way:
+
+$$P(\theta|D)=\frac{P(D|\theta)P(\theta)}{P(D)},$$
+We can break this down:
+$$P(\theta|D)= Posterior$$
+$$P(D|\theta) = Likelihood$$
+Keep in mind that $\theta$ is a distribution, so its' values have to sum or integrate to 1. And that will bet rue for any distribution.
+
+$$P(A) = "Normalizing" constant$$
+This normalizing constant does NOT depend on $\theta$. You can ignore this temporarily and say that the posterior is proportional to the likelihood * prior:
+$$P(\theta|D)\propto P(D|\theta)P(\theta) $$
+Similarly, we can obtain a posterior odds for $\theta_{1}$ and $\theta_{0}$:
+$$ \frac {P(\theta_{1}|D)} {P(\theta_{0}|D)}= \frac{P(D|\theta_{1})} {P(D|\theta_{0})} \frac {P(\theta_{1})} {P(\theta_{0})}$$
+The posterior odds (represented at the left-side of the equation above) is now the product of the Liklihood ratio and the prior odds, respectively.
+
+Recall our elephant example, before we were using 2 categories (forrest and savanna) but now suppose we have 5 categories.
+$$P(Z_{i}= k|X_{i})= P$$
+$$P(Z_{i}= k|X_{i})\propto L_{ik} \Pi_{k}, $$
+and this is true for each $k$.
+
+The posterior mode is the value of $Z$ that maximizes the posterior probability.
+
+For example, if we wanted to do inference for the binomial proportion. Let's suppose we have 100 savanna elephants 30 of which have allele "1" and 70 of which have allele "0" - this represents our data, $D$. The frequency of allele "1" at this locus in savanna elephants is represented by $q$. The distribution of our data would be presented in the following way:  
+$$L(q)=P(D|q)\propto q^{30}(1-q)^{70}$$
+In the plot below, the x-axis represents frequency of allele "1" $q$ and the y-axis is the $L(q)$. This can also be represented by:
+$$ P(q|D)\propto P(D|q) P(q),$$
+which is the posterior distribution of $q$.
+```{r}
+B.function = rbeta(100,31,71)
+d = density(B.function)
+plot(d, main = "Area of the Beta function")
+polygon(d, col="gray", border = "gray")
+```
+
+The issue here is that we need to come with a prior for the parameter $q$. And that prior is well represented by the Beta distribution.
+
+Broadly, the beta distribution with parameters $\alpha$ and $\beta$ has density:
+$$P(x)=\frac {x^{\alpha-1}(1-x)^{\beta-1}} {Beta(\alpha,\beta)},\space where\space(0\leq x\leq 1). $$
+For $\alpha = \beta = 1$ we get a uniform distribution:
+$$P(x)= \frac {x^{1-1}(1-x)^{1-1}} {1} = \frac {1} {1}$$
+
+So if we apply this to our elephant example described above, we get the following:
+$$q^{30}(1-q)^{70} *q^{\alpha-1}(1-q)^{\beta-1} $$
+$$q^{30+\alpha-1}(1-q)^{70+\beta-1}= Be(30+\alpha, 70+\beta) $$
+
+Note in the Beta function $\alpha, \beta >1$, otherwise we just get a uniform distribution.
+$$Beta\space distribution \space mean= \frac {\alpha} {\alpha +\beta}$$
+
+$$If \space\alpha > \beta, \space mean \space close \space to \space 1,$$
+$$If \space\alpha < \beta, \space mean \space close \space to \space 0,$$
+and variance gets smaller as $\alpha + \beta$ increases.
+
+
+# Example 2:
+Suppose we see 300 "1" alleles of 1000 total alleles. So now the posterior distribution of $q$ given our data $D$ looks like this:
+$$p(q|D) \propto q^{300}(1-q)^{700},$$
+similarly our beta function would take this form: $Be(301,701).$
+```{r cars}
+#change to new numbers
+B.function = rbeta(1000,301,701)
+d = density(B.function)
+plot(d, main = "Area of the Beta function")
+polygon(d, col="gray", border = "gray")
+```
+
+Note: When the likelihood is not that informative then the prior matters more.
+
+With our elephant example, the genotype data follows a binomial distribtuion. Consequently, our conjugate prior follows the beta distribution. So, if you give a beta prior then you get a beta posterior.
+
+#Example 3:
+
+Suppose our data is the following: $X \sim N(\mu, 1)$, and our prior on $\mu \sim N(\theta_{0}, \sigma^{2}_{0}$.
+The posterior on $\mu$ would be:
+$$P(\mu|X) \propto P(X|\mu) P(\mu)$$
+$$= \frac {1}{\sqrt{2\pi}}exp(-\frac{1}{2}(x-\mu)^{2})*\frac{1}{\sqrt{2\pi\sigma^{2}_{0}}}exp(-\frac{1}{2}\frac{(\mu-\theta_{0})^{2}}{\sigma^{2}_{0}}) \propto exp(-\frac{1}{2}[\mu^{2}-2X\mu+\frac {\mu^{2}-2\mu\theta_{0}}{\sigma^{2}_{0}}]) $$
+
+Recognize that the equation above is actually a normal distribution for $\mu$, which can be further reduced to:
+$$=exp[-\frac {1}{2}(\mu^{2}(1+\frac{1}{\sigma^{2}_{0}}) -2\mu (X + \frac {\theta_{0}} {\sigma^{2}_{0}})]. $$
+To further illustrate the point, suppose $\mu \sim N(\theta, \sigma^{2}_{1})$ then
+$$P(\mu)\propto exp(\frac{1}{2_{\sigma^{2}}}(\mu^{2}-2\mu\theta_{1})), $$
+we can set $\frac {1}{\sigma^{2}_{1}}=1 + \frac{1}{\sigma^{2}_{0}}$ and $\frac {\theta_{1}} {\sigma^{2}_{1}}=X + \frac{\theta_{0}}{\sigma^{2}_{0}}, $ and we can introduce new variable to present the following:
+$$\tau^{2}_{1}= 1 + \sigma^{2}_{0}$$
+and
+$$\tau^{2}_{0}= \frac {1}{\sigma^{2}_{0}},   $$
+and the main point is that the posterior distribution is the average of the likelihood and prior:
+$$\theta_{1}=\frac {X+\tau^{2}_{0} \theta_{0}} {1+\tau^{2}_{0}}. $$

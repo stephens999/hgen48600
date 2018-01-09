@@ -1,0 +1,165 @@
+% -----------------------------*- LaTeX -*------------------------------
+\documentclass[12pt]{report}
+\usepackage{scribe_hgen486}
+\usepackage{bbm}
+
+\begin{document}
+
+\scribe{Justin Hsu}		% required
+\lecturenumber{4}			% required, must be a number
+\lecturedate{January 14}		% required, omit year
+\lecturer{Matthew Stephens} 
+
+\maketitle
+
+% please leave this comment 
+\framebox[.95\textwidth]{\parbox{.93\textwidth}{ {{\bf Note:}} These
+lecture notes are still rough, and have only have been mildly
+proofread.  }}
+\vspace*{.1in}
+
+
+% feel free to delete content below this line 
+% ----------------------------------------------------------------------
+\section{Likelihood Analysis}
+Consider the set of data of 100 tusks, 40 of which have the "1" allele, 60 with the "0" allele
+Then the data has the likelihood function \begin{equation} L(q) = P(Data|M_q)\end{equation}. We can write this as \begin{equation} L(q) = q^{40}(1-q)^{60}\end{equation}
+
+Now consider the log of the likelihood function: \begin{equation} \ell(q) = 40log(q) + 60 log(1-q)\end{equation}
+
+We can estimate q by finding the value of q that maximizes $L(q)$. This is known as the Maximum Likelihood estimator (mle), which we denote as $\hat{q}$. A useful feature is that the value that maximizes the likelihood function also maximizes the log likelihood function.
+\newcommand{\argmax}{\arg\!\max}
+\begin{equation}
+\begin{aligned} \hat{q} = \argmax_q L(q) \\
+= \argmax_q \ell(q)
+\end{aligned} 
+ \end{equation}
+
+This is useful because it is sometimes easier to find the maximum of $\ell(q)$.
+
+Returning to the elephant tusk example, we find the maximum of the likelihood function by taking the derivative of the log likelihood.
+\begin{equation}
+\begin{aligned}
+\ell'(q) = \frac{40}{q} - \frac{60}{1-q}\\
+0 = \frac{40}{q} - \frac{60}{1-q} \\
+\hat{q} = \frac{40}{100}
+\end{aligned}
+\end{equation}
+
+We can extend this generally so that given two populations $n_1$ and $n_0$, we have a likelihood function \begin{equation}
+L(q) = q^{n_1}(1-q)^{n_0}
+\end{equation}
+and a log likelihood function \begin{equation}
+\ell(q) = n_1log(q) - n_0log(1-q)
+\end{equation}
+Then the maximum likelihood estimate will have the form \begin{equation}
+\hat{q} = \frac{n_1}{n_1+n_0}
+\end{equation}
+
+This is the maximum likelihood of the Binomial Distribution.
+
+\section{Mixture Models}
+We now move on to mixture models, which our models that consist of a mixture of two or more distributions. As an example, consider the heights of all humans of these worlds. What would be the distribution of these heights. We could assume that they are normally distributed, but what if the male heights come from a different distribution than the female heights?
+
+Suppose we have \begin{equation}
+\begin{aligned}
+male height\sim N(\mu_m,\sigma^2_m)\\
+female height \sim N(\mu_f,\sigma^2_f)
+\end{aligned}
+\end{equation} and suppose the population is 50\% male and 50\% female.
+
+Let $X$ be the height of a randomly chosen person. What would be the density function for $X$?
+
+If $X$ was discrete, then \begin{equation}
+Pr(X=x) = Pr(X = x|male)Pr(male) + Pr(X=x|female)Pr(female)
+\end{equation}
+
+The continuous analogue would be:
+\begin{equation}
+\begin{aligned}
+f_x(x) = \frac{1}{2}f_{x|male}(x) + \frac{1}{2}f_{x|female}(x) \\
+= \frac{1}{2}N(X;\mu_m,\sigma^2_m) +  \frac{1}{2}N(X;\mu_f,\sigma^2_f)
+\end{aligned}
+\end{equation}
+
+We call the probabilities $Pr(male) = \frac{1}{2}$ and $Pr(female) = \frac{1}{2}$ the "mixture proportions". We call $f_{x|male}(x)$ and $f_{x|female}(x)$ the "component densities".
+
+Returning to our elephant tusk example, suppose we have data $X = (X_1,X_2,...,X_n)$ on $n$ tusks, and that we know the allele frequencies. 
+
+Let the proportion of elephants that are Savannah be $\Pi_S$. 
+
+Let $Z_i \in \lbrace S,F\rbrace$ denote whether tusk $i$ came from either a Savannah or Forest elephant. We call $\lbrace S,F\rbrace$ the "component labels".
+
+Then we have the mixture model \begin{equation}
+\begin{aligned}
+P(X_i = x_i|\Pi_S) = Pr(Z_i=S)Pr(X_i = x_i|Z_i=S) + Pr(Z_i = F)Pr(X_i=x_i|Z_i = F) \\
+ = \Pi_SPr(X_i = x_i|Z_i=S) + (1-\Pi_S)Pr(X_i=x_i|Z_i = F)
+\end{aligned}
+\end{equation}
+
+More generally \begin{equation}
+Pr{X_i = x_i} = \sum_{k}\Pi_kPr(X_i = x_i|Z_i = k)
+\end{equation}
+where $\Pi_1,...\Pi_k$ are nonnegative and sum to 1.
+
+The likelihood function of this mixture model is
+\begin{equation}
+\begin{aligned}
+L(\Pi_S) = P(X|\Pi_S)\\=\prod_{i=1}^{n}P(X_i=x_i|\Pi_S)
+\end{aligned}
+\end{equation}
+
+When we take the log of this likelihood function, we get \begin{equation}
+\begin{aligned}
+\ell(\Pi_S) = \sum_{i=1}^{n}log(Pr(X_i=x_i|\Pi_S))\\
+= \sum_{i=1}^{n}log[\Pi_SP(X_i=x_i|Z_i=S)+(1-\Pi_S)P...]
+\end{aligned}
+\end{equation}
+
+Unlike the example with the binomial distribution, this log likelihood is difficult to differentiate, so to find the maximum, we must rely on numerical methods.
+
+\section{EM Algorithm}
+The Expectation Maximization (EM) Algorithm is a method for finding maximum likelihood estimates for a model. The key idea behind the EM algorithm is "data augmentation". It is data which we do not have but wish we would have. Suppose our data is $X$, then the augmented data would be $(X,Z)$, where $Z$ is the "missing data".
+
+Let $L(\theta) = P(X|\theta)$ be the "marginal likelihood"/"observed likelihood". The "complete likelihood" is $L_{comp}(\theta) = P(X,Z|\theta)$. 
+
+The steps of the EM algorithm are as follows:
+\begin{enumerate}
+
+\item Choose some $\theta_0$
+
+\item E step: Form the "expected" complete log likelihood by taking the expectation over Z. In other words find \begin{equation}
+Q(\theta,\theta_0) = E_{Z|X,\theta_0}[\ell_{comp}(\theta;Z,X)]
+\end{equation}
+
+\item M step: Choose the value of $\theta$ which maximizes $Q(\theta,theta_0)$.
+
+\item The maximizes theta is your new $\theta_0$. Repeat the E and M steps until $\ell(\theta)$ does not change very much.
+\end{enumerate}
+
+The advantage of the EM algorith is that the likelihood will always increase with each iteration.
+
+Sometimes the algorithm will converge to a local optimum rather than a global optimum. In practice the algorithm is run multiple times.
+
+Returning to elephant tusk mixture model, which has a complete likelihood \begin{equation}
+\begin{aligned}
+L(\Pi_S) = P(X,Z|\Pi_S) = \prod_{i=1}^{n}P(X_i,Z_i|\Pi_S) \\
+ = \prod_{i=1}^{n}P(Z_i|\Pi_S)
+ \propto \prod_{i=1}^{n}\Pi_S^{\mathbbm{1}_{Z_i=S}}(1-\Pi_S)^{\mathbbm{1}_{Z_i=F}}
+\end{aligned}
+\end{equation}
+
+$\mathbbm{1}$ stands for the indicator function, which is 1 for the given event and 0 otherwise.
+
+Taking the log of this expression, we get
+\begin{equation}
+log(\prod_{i=1}^{n}P(Z_i|\Pi_S)) = \underset{ constant}{C} + \sum_i \mathbbm{1}(Z_i=S)log(\Pi_S) + \sum_i \mathbbm{1}(Z_i=F)log(1-\Pi_S)
+\end{equation}
+
+If we take the expectation of the sum of indicator functions, we find the probability of that event occurring. We find that the log likelihood above is maximizes at
+\begin{equation}
+\frac{\sum_i E(\mathbbm{1}(Z_i=S)|X,\theta)}{\sum_i E(...) = n}
+\end{equation}
+
+\end{document}
+

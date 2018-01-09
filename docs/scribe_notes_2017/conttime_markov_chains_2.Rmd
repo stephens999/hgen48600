@@ -1,0 +1,136 @@
+---
+title: "Comp. Bio. I. Continuous-time Markov processes"
+author: "Yeonwoo Park"
+date: "March 16, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***
+#### 1. Superposition of independent Poisson processes
+
+Let $\{ N_{1,t}; t \ge 0 \}$ and $\{ N_{2,t}; t \ge 0 \}$ be independent Poisson processes with rates $\lambda_1$ and $\lambda_2$. We are interested in the stochastic process $\{ N_t; t \ge 0 \}$ defined as
+
+$N_t = N_{1,t} + N_{2,t}$.
+
+From the fact that the sum of the number of arrivals in two non-overlapping intervals of a Poisson process follows a Poisson distribution, we have a reason to believe that $\{ N_t; t \ge 0 \}$ is a Poisson process with rate $\lambda = \lambda_1 + \lambda_2$. This can be proven directly:
+
+(1) $\Pr(N_t = k) = \sum_{l=0}^k \Pr(N_{1,t} = k-N_{2,t} \mid N_{2,t}=l) \Pr(N_{2,t} = l) = \frac{e^{-(\lambda_1 + \lambda_2)t}[(\lambda_1 + \lambda_2)t]^k}{k!} \sum_{l=0}^k \frac{k!}{l!(k-l)!}(\frac{\lambda_1}{\lambda_1 + \lambda_2})^{k-l} (\frac{\lambda_2}{\lambda_1 + \lambda_2})^l$.
+
+The sum in the last term equals 1, which gives us the desired result. (Implicit here is the fact that if a stochastic process $\{ X_t; t \ge 0 \}$ is such that $X_t$ follows a Poisson distribution with mean $\lambda t$ for all $t \ge 0$, then $\{ X_t; t \ge 0 \}$ is a Poisson proces with rate $\lambda$.) By induction, the superposition of any finite number of independent Poisson processes is a Poisson process with rate equal to the sum of the rates of the individual processes.
+
+***
+#### 2. Thinning of a Poisson process.
+
+Let us now consider dividing, or "thinning," $\{ N_t; t \ge 0 \}$ into two subprocesses. Every time an arrival occurs, it is classified as belonging to subprocess $N_{1,t}$ with probability $p_1$ and $N_{2,t}$ with probability $p_2 = 1-p_1$. This classification occurs independently for each arrival. Then $\{ N_{1,t}; t \ge 0 \}$ and $\{ N_{2,t}; t \ge 0 \}$ are independent Poisson processes with rates $\lambda p_1$ and $\lambda p_2$:
+
+(2) $\Pr(N_{1,t} = k) = \sum_{l=0}^{\infty} \Pr(N_t = k+l) \frac{(k+l)!}{k!l!} p_1^k p_2^l = e^{-\lambda t} \frac{(\lambda p_1 t)^k}{k!} \sum_{l=0}^{\infty} \frac{(\lambda p_2 t)^l}{l!} = e^{-\lambda p_1 t} \frac{(\lambda p_1 t)^k}{k!}$.
+
+(3) $\Pr(N_{1,t}=k, N_{2,t}=l) = \Pr(N_t = k+l) \frac{(k+l)!}{k!l!} p_1^k p_2^l = e^{-\lambda (p_1+p_2)t} \frac{(\lambda p_1 t)^k (\lambda p_2 t)^l}{k!l!} = \Pr(N_{1,t} = k) \Pr(N_{2,t} = l)$.
+
+The thinning of a Poisson process into more than two subprocesses can be described similarly.
+
+***
+#### 3. Non-stationary Poisson processes.
+
+Let $\{ N_t; t \ge 0 \}$ be a stochastic process such that $N_0 = 0$, arrivals happen at most by one unit at a time, and the number of arrivals in any two non-overlapping intervals are independent. Unlike the stationary Poisson processes we have seen above, however, $\{ N_t; t \ge 0 \}$ is non-stationary: the rate of arrival $\lambda = \lambda (t)$ varies with time. From the independent increment property, $E(N_t)$ can be calculated:
+
+(4) $E(N_t) = E(\sum_{i=0}^n [N_{(t/n)i} - N_{(t/n)(i-1)}]) = \sum_{i=0}^n E[N_{(t/n)i} - N_{(t/n)(i-1)}] \approx \sum_{i=0}^n \lambda[(t/n)i] (t/n)$
+
+In the limit that $n \rightarrow \infty$,
+
+(5) $E(N_t) = \int_{0}^{t} \lambda(t') dt'$
+
+Let $a(t) = E(N_t)$ and assume that $a(t)$ is continuous. We define the inverse of $a(t)$:
+
+(6) $\tau (t) = inf \{s; a(s) > t \}$
+
+We then define a new stochastic process $\{ M_t; t \ge 0 \}$ in the following way:
+
+(7) $M_t = N_{\tau(t)}$.
+
+It can be shown that $\{ M_t; t \ge 0 \}$ is a stationary Poisson process with rate 1. The arrival number and waiting time distributions for $\{ N_t; t \ge 0 \}$ can be calculated from Eq. 7. It turns out that
+
+(8) $N_t - N_s$ follows a Poisson distribution with rate $a(t-s) = \int_{s}^{t} \lambda(t') dt'$.
+
+***
+#### 4. Non-stationary thinning of a Poission process
+
+Let $\{ N_t; t \ge 0 \}$ be a Poisson process with rate $\lambda(t)$, and suppose that thinning occurs with non-stationary probabilties $p_1(t)$ and $p_2(t) = 1-p_1(t)$. The resulting subprocesses can be described as non-stationary Poisson processes with rates $\lambda(t) p_1(t)$ and $\lambda(t) p_2(t)$.
+
+***
+#### 5. M/G/$\infty$ queue
+
+Consider a thinning scheme where arrivals are classified not at the moment they occur but later at a certain given time. Such a stochastic process is called the M/G/$\infty$ queue. Suppose that a stationary Poisson process $\{ N_t; t \ge 0 \}$ is being thinned into $n$ states. Starting at time $t_0$, arrival times are recorded and arrivals classified at time $t_1$. If $u \in (t_0, t_1)$ is an arrival time,  then this arrival has probability $p_i(t_1 -u)$ of being classified as state $i$. Thus, according to Sections 3 and 4, the number of state $i$ observed at $t_1$ follows a Poisson distribution with mean $\lambda \int_{t_0}^{t_1} p_i(t_1 -u) du$.
+
+***
+#### 6. A differential equation framework
+
+Let us take a different approach to characterizing continuous-time stochastic processes. Let $\{ N_t; t \ge 0 \}$ be a stochastic process and define $P_i(t) = \Pr(N_t = i)$. From known structural features of $\{ N_t; t \ge 0 \}$, a set of differential equations for $P_i(t)$ can be derived and solved. Let us take a stationary Poisson process with rate $\lambda$ as an example. For visibility, we write $N(t)$ instead of $N_t$. The following equation can be derived from the independent increment property.
+
+(9) $\Pr[N(t+h)=j] = \sum_{i \le j} \Pr[N(t)=i] \Pr[N(t+h)-N(t) = j-i]$
+
+Only $i \le j$ is considered because $N(t)$ is non-decreasing. Notice that
+
+(10) $\Pr[N(t+h)-N(t) \ge 2] = \Pr(T_2 \le h)$,
+
+where $T_2$ is the sum of two interarrival times. From the independent increment and stationarity properties, it can be shown that the interarrival times of a Poisson process follows an exponential distribution with rate $\lambda$ and hence that $T_2$ follows a $\Gamma (2,\lambda)$ distribution. Then,
+
+(11) $\lim_{h \rightarrow 0} \frac{\Pr[N(t+h)-N(t) \ge 2]}{h} = \lim_{h \rightarrow 0} \frac{\Pr(T_2 \le h)}{h} = \frac{d}{dt} \Pr(T_2 \le t) \mid_{t = 0} = \lambda^2 t e^{-\lambda t} \mid_{t = 0} = 0$.
+
+Notice also that since $\Pr[N(t+h)-N(t) = 1] = \Pr(T_1 \le h)$ where $T_1$ follows an exponential distribution with rate $\lambda$,
+
+(12) $\lim_{h \rightarrow 0} \frac{\Pr[N(t+h)-N(t) = 1]}{h} = \lim_{h \rightarrow 0} \frac{\Pr(T_1 \le h)}{h} = \frac{d}{dt} \Pr(T_1 \le t) \mid_{t = 0} = \lambda e^{-\lambda t} \mid_{t = 0} = \lambda$
+
+Let $o(h)$ denote functions for which $\lim_{h \rightarrow 0} o(h)/h = 0$. Expanding Eq. 9,
+
+(13)  $\Pr[N(t+h)=j] = \Pr[N(t)=j][1-\lambda h + o(h)] + \Pr[N(t)=j-1][\lambda h + o(h)] + o(h)$
+
+Rearranging Eq. 13, the following differential equation can be obtained.
+
+(14) $\frac{dP_j(t)}{dt} = -\lambda P_j(t) + \lambda P_{j-1}(t)$.
+
+(15) $\frac{dP_0(t)}{dt} = -\lambda P_0(t)$
+
+By introducing the initial condition $P_0(0) = 1$, Eqs. 14 and 15 can be solved to give the Poisson distribution probabilities.
+
+***
+#### 7. Birth-death processes
+
+The differential equation framework outlined above allows a precise description of stochastic processes more complex than Poisson processes. For example, by letting $\lambda$ to vary as follows,
+
+(16) $\lambda_j = \lambda j$,
+
+Eqs. 14 and 15 can be modified as
+
+(17) $\frac{dP_j(t)}{dt} = -\lambda j P_j(t) + \lambda (j-1) P_{j-1}(t)$
+
+(18) $\frac{dP_1(t)}{dt} = -\lambda P_1(t)$
+
+The stochastic process described by these equations is called the pure-birth process or the Yule process. Notice that unlike Poisson processes, the state space of a pure-birth process consists of $E = (1, 2, \dots)$.
+
+By introducing death parameter $\mu_j$, the following general birth-death process can also be defined.
+
+(19) $\frac{dP_j(t)}{dt} = -(\lambda_j +\mu_j) P_j(t) + \lambda_{j-1} P_{j-1}(t) + \mu_{j+1} P_{j+1}(t)$
+
+(20) $\frac{dP_0(t)}{dt} = -\lambda_0 P_j(t) + \mu_{1} P_{1}(t)$
+
+These differential equations are complex enough that only stationary distribution has an analytic form.
+
+***
+#### 8. Continuous-time Markov processes
+
+Finally, we consider a continuous-time Markov process on bounded, finite state space $E = \{1, 2, \dots, s \}$. Let $P_{ij}(t)$ denote the probability of ending at state $j$ at time $t$ when the system began at state $i$. The following differential equation, called the Kolmogorov forward equation, describes the forward evolution of the system.
+
+(21) $\frac{dP_{ij}(t)}{dt} = -vP_{ij}(t) + \sum_{k \neq j} P_{ik}(t) q_{kj}$
+
+where $q_{kj}$ is the instantaneous rate of the transition $k \rightarrow j$, and $v_j = \sum_{k \neq j} q_{jk}$. By constructing the rate matrix $Q$,
+
+(22) $Q_{ij} = q_{ij}$ for $i \neq j$ and $Q_{ii} = -v_i$,
+
+the following matrix-form differential equation can be derived:
+
+(23) $\frac{dP}{dt} = PQ$.

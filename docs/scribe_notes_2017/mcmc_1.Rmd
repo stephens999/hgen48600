@@ -1,0 +1,147 @@
+---
+title: "Lecture 7"
+author: "Kevin Gleason"
+date: "Jan 24, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!-- please leave this comment -->
+***Note***: *These lecture notes are still rough, and have only have been mildly proofread.*
+
+# Markov Chain Monte Carlo, Part I
+
+Overview:
+It is not always easy to derive probabilities and distribution functions analytically - perhaps the calculations are complicated or the density/probability mass function is difficult to summarize in a closed form. In such cases, it may be possible to simulate the distribution of interest in order to make conclusions about paramaters of interest.
+
+## Gibbs Sampling - Introduction
+
+(See also the section in [five Minute Stats](https://stephens999.github.io/fiveMinuteStats/gibbs1.html).)
+
+Imagine that there is a joint probability distribution from which is it difficult to simulate samples, but we wish to make inferences about the distribution. We may be able to use Gibbs Sampling to simulate from one or more simpler distributions to generate the more complicated distribution.
+
+A simple example of Gibbs Sampling is the following. Let $X$ and $Y$ be two random variables with a joint probability distribution. Consider the basic case where $X$ and $Y$ are binary. What if we are interested in simulating from the distribution of $X$ and $Y$?
+
+Since we have two binary variables, the joint density can be summarized by a 2x2 contingency table:
+
+\begin{array}{c|c|c}
+    X / Y & 0 & 1\\
+    \hline
+    0 & p(X=0,Y=0) & p(X=0,Y=1)\\
+    1 & p(X=1,Y=0) & p(X=1,Y=1)\\
+\end{array}
+
+From the 2x2 table, we can calculate the marginal probabilities (from the row and column sums) and conditional probabilities since $p(X|Y)=\frac{p(X,Y)}{p(Y)}$. Using these values, we simulate a sample as follows:
+
+1. Simulate a new value of $X$ from $p(X|Y=y)$ where $y$ is the current value of $Y$. 
+2. Simulate a new value of $Y$ from $p(Y|X=x)$ where $x$ is the current value of $X$ (generated in step 1).
+3. Reiterate until we obtain the desired number of draws of $(X,Y)$.
+
+Our data will look like the following:
+
+\begin{array}{c|cc}
+    Step & X & Y\\
+    \hline
+    0 & X_0 & Y_0\\
+    1 & X_1 & Y_1\\
+    2 & X_2 & Y_2\\
+    \vdots & \vdots & \vdots\\
+\end{array}
+
+At each step, we generate new values of $X$ and $Y$ based on the conditional distribution at the previous step. Representing the generating value by the conditional sign $\mid$, the data generation process (DGP) looks like:
+
+\begin{array}{c|cc}
+    Step & X & Y\\
+    \hline
+    0 & X_0 & Y_0\\
+    1 & X_1|Y_0 & Y_1|X_1\\
+    2 & X_2|Y_1 & Y_2|X_2\\
+    \vdots & \vdots & \vdots\\
+\end{array}
+
+Or representing the DGP using arrows, we have:
+
+\begin{array}{c|ccc}
+    Step & X &  & Y\\
+    \hline
+    0 & X_0 &  & Y_0\\
+      &   & \swarrow  &  \\
+    1 & X_1 & \longrightarrow & Y_1\\
+      &   & \swarrow  &  \\
+    2 & X_2 & \longrightarrow& Y_2\\
+     & \vdots & \swarrow & \vdots\\
+\end{array}
+
+Note that each pair of observations is Markov. I.e. $(X_i,Y_i)$ is Markov, because $$Pr((X_{t+1},Y_{t+1}) \mid (X_{0},Y_{0}), ... , (X_{t},Y_{t})) = Pr((X_{t+1},Y_{t+1}) \mid (X_{t},Y_{t}))$$.
+
+A benefit to using Markov chains for such simulations is that they are convenient to code. The only algorithm we need to code is: given the current state, use [specified process] to get to the next state. Then we reiterate that step over and over via the transition matrix (a.k.a. kernel matrix) until we have reached the desired number of samples.
+
+Sample code can be found [here](https://stephens999.github.io/fiveMinuteStats/gibbs1.html).
+
+Note that the proportions of iterations where $X=x$ and $Y=y$ are similar to $p_{X,Y}(x,y)$ in the example. For a sufficiently large number of iterations, if those proportions hold, then the table of $p_{X,Y}(x,y)$ is close to the stationary distribution. The stationary distribution can also be used to obtain the marginal probabilites $p_X(x)$ and $p_Y(y)$ if a distribution is more complicated and we cannot obtain the marginals simply from column and row sums.
+
+**QUESTION raised in class:** Can we think of Gibbs Sampling as a way to simulate a multivariate distribution sampled one unit at a time? 
+
+**ANSWER:** Yes, we use the algorithm to sample one value from a distribution that is conditional on all the others.
+
+In the three variables case:
+$$ X,Y,Z \\
+X \mid Y,Z \\
+Y \mid X,Y \\
+Z \mid X,Y $$
+
+Now I can use the 3 conditional, *univariate* distributions to derive a single *multivariate* distribution. Generate $X$ from $X \mid Y=y,Z=z$, then $Y$ from $Y\mid X=x,Z=z$, then $Z$ from $Z\mid X=x,Y=y$. Reiterate until we obtain a multivariate distribution of the desired size.
+
+## Gibbs Sampling - Mixture of Normals
+
+(See also the section in [five Minute Stats](https://stephens999.github.io/fiveMinuteStats/gibbs2.html).)
+
+Gibbs sampling isn't restricted to the setting of discrete random variables. For example, consider a mixture model where we believe that our data is generated from one of two distributions. Perhaps our data follow a bimodal distribution, leading to a belief that data came from mixture of normals. 
+
+Let $j$ be an observation of a continuous variable, $X$, generated from component $k$, $k \in \left\{1,...,K\right\}$. Note that in the current case where we have two mixing distributions, $K=2$. We introduce a *latent variable* $Z_j$ (unobserved) that stores which component observation $j$ came from. We let $P(Z_j=k)=\pi_k$, $\pi_i \geq 0 \forall i$ and $\Sigma_i \pi_i = 1$.
+
+### Gibbs sampler:
+
+So, in this setting, we have two unknowns of interest:
+
+1. $\mu$, a $K$-length vector of means, one for each component in the mixture
+2. $\pi$, a $K$-length vector of probabilities, one for each component in the mixture
+
+where $K$ = number of components = 2.
+
+<!--
+$D$ represents our data.
+$$X,Z|D \\
+X|Z,D \\
+Z|X,D$$
+-->
+
+Since we have two unknowns that we would like to estimate, an intuitive approach might seem to be:
+
+1. Sample $\mu \mid \pi,x$
+2. Sample $\pi \mid \mu,x$
+
+But it turns out that we don't have a way to sample these directly. Instead, we augment the space to include $Z$, so that we sample from $p(z,\mu,\pi|x)$. Now we can follow this algorithm (and iterate):
+
+1. Sample $\mu$ from $\mu \mid x,z,\pi$
+2. Sample $\pi$ from $\pi \mid x,z,\mu$
+3. Sample $z$ from $z \mid x,\pi,\mu$
+
+As in the discrete variable case, we iterate through these steps many times. Then, we can look at the distributions of our estimate parameters $\hat{\mu}$ and $\hat{\pi}$. Where the distribution is maximized is a good point estimate for our parameter. The empirical quantiles can be used to derive an interval to incorporate uncertainty of our estimate.
+
+## Yet to come: Bayesian inference
+
+Note that we can fit our mixture model using Bayesian techniques, incorporating a *prior* for our parameters, and can account for/estimate the uncertainty in our parameters as well.
+
+$$
+X \sim N(\mu, 1) \\
+\mu \sim N(\theta_0, \frac{1}{\tau_0}) \\
+\Rightarrow \mu \mid X \sim N(\theta_1, \frac{1}{\tau_1}) \\
+\\
+X=vector:
+\\
+\Rightarrow \mu \mid X_1,...,X_n \sim N(\theta_1^{'}, \frac{1}{\tau_1^{'}})
+$$
