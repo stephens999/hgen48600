@@ -1,74 +1,99 @@
 ---
-title: "quick look at CCR5 data"
-author: "Matthew Stephens"
-date: 2016-02-25
+title: A quick look at the CCR5 data
+author: Matthew Stephens and Peter Carbonetto
+output: workflowr::wflow_html
 ---
 
-<!-- The file analysis/chunks.R contains chunks that define default settings
-shared across the workflowr files. -->
-```{r read-chunk, include=FALSE, cache=FALSE}
-knitr::read_chunk("chunks.R")
+This is for Problem Set 7, Part B. See also [Novembre et al
+2005](https://doi.org/10.1371/journal.pbio.0030339).
+
+```{r knitr-opts, include=FALSE}
+knitr::opts_chunk$set(comment = "#",collapse = TRUE,results = "hold",
+                      fig.align = "center")
 ```
 
-<!-- Update knitr chunk options -->
-```{r knitr-opts-chunk, include=FALSE}
+Load some packages used in the analysis below:
+
+```{r load-pkgs, message=FALSE, warning=FALSE}
+library(geosphere)
+library(ggplot2)
+library(cowplot)
+library(maps)
+library(mvtnorm)
 ```
 
-<!-- Insert the date the file was last updated -->
-```{r last-updated, echo=FALSE, results='asis'}
+Load the CCR5 data:
+
+```{r load-data}
+ccr5 <- read.table("../data/CCR5/CCR5.freq.txt",header = TRUE)
 ```
 
-<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
- package git2r is installed -->
-```{r code-version, echo=FALSE, results='asis'}
+Plot the distribution of allele frequencies:
+
+```{r hist-allele-freq, fig.height=3.25, fig.width=3}
+hist(ccr5$Freq,breaks = 16)
 ```
 
+Change longitudes greater than 180 to negative numbers:
 
-## Load Data
-
-The following reads in the data, and converts longitudes >180 to corresponding
-negative longitudes (this avoids warnings in geosphere package later)
-```{r}
-ccr5 = read.table("../data/CCR5/CCR5.freq.txt",header=TRUE)
-ccr5[,1] = ifelse(ccr5[,1]>180,ccr5[,1]-360,ccr5[,1]) # changes longitudes>180 to negative
+```{r fix-longitudes}
+ccr5$Long <- ifelse(ccr5$Long > 180,ccr5$Long - 360,ccr5$Long)
 ```
 
-# Compute pairwise distances
+We will use this function below to plot the allele frequencies on a
+map of Europe (and parts of Asia):
 
-This can be done using the geosphere package. Dividing by 1000 gives distance in km.
-```{r}
-geo.dist = geosphere::distm(ccr5[,1:2])/1000
-hist(geo.dist)
+```{r draw-map}
+draw_map <- function (dat)
+  ggplot(dat,aes(x = Long,y = Lat)) +
+    geom_path(data = map_data("world"),
+              aes(x = long,y = lat,group = group),
+              color = "gray",linewidth = 0.35) +
+    xlim(c(-20,80)) +
+    ylim(c(30,70)) +
+    theme_cowplot(font_size = 12)
 ```
 
-# Deal with 0 counts
+This plot shows the allele frequency data and the geographical
+locations where these data were obtained. Note that a few data points
+are not shown in this map.
 
-Some of the frequency estimates are 0. I deal with this
-by first working out the original counts (frequency * samplesize *2),
-and then adding a pseudocount to each allele before recomputing frequencies.
+```{r plot-data, fig.height=3.5, fig.width=5.5, warning=FALSE}
+draw_map(ccr5) +
+  geom_point(shape = 21,color = "black",size = 2.5,
+             mapping = aes(fill = Freq)) +
+  scale_fill_gradient2(low = "deepskyblue",mid = "gold",high = "red",
+                       midpoint = 0.1) +
+  ggtitle("data")
+```
+
+Compute pairwise distances
+--------------------------
+
+Compute distances (in km) between the points.  Dividing by 1,000 gives
+distance in km.
+
+```{r distm, fig.height=3.25, fig.width=3}
+D <- distm(ccr5[1:2])/1000
+hist(D,breaks = 16,xlab = "distance (km)")
+```
+
+These distances seem to broadly make sense. For example, the driving
+distance from Paris to Moscow is about 3,000 km.
+
+Deal with zero counts
+---------------------
+
+Some of the frequency estimates are zero. I deal with this by first
+working out the original counts (2 * frequency * samplesize), and then
+adding a pseudocount to each allele before recomputing frequencies.
 The resulting column "fhat" can be transformed by log(fhat/(1-fhat))
-to be something that is not entirely non-normal...
+to be something that is not entirely non-normal.
 
-```{r}
-ccr5$count = round(ccr5$Freq* ccr5$SampleSize * 2)
-ccr5$fhat = (ccr5$count+1)/(ccr5$SampleSize*2+2)
-ccr5$Z = log(ccr5$fhat/(1-ccr5$fhat))
-hist(ccr5$Z)
-```
-
-# Similarity of allele frequency with distance?
-
-Here we take a quick look to check that Z has some kind of spatial trend.
-
-```{r}
-plot(x=ccr5$Lat,y=ccr5$Long,type="n")
-text(round(ccr5$Z),x=ccr5$Lat,y=ccr5$Long)
-```
-
-
-
-## Session information
-
-<!-- Insert the session information into the document -->
-```{r session-info}
+```{r compute-Z, fig.height=3.5, fig.width=3}
+logit <- function (x) log(x/(1-x))
+ccr5 <- transform(ccr5,count = round(2*Freq*SampleSize))
+ccr5 <- transform(ccr5,fhat = (count + 1)/(2*SampleSize + 2))
+ccr5 <- transform(ccr5,Z = logit(fhat))
+hist(ccr5$Z,breaks = 16,xlab = "Z")
 ```
