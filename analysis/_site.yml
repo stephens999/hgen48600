@@ -5,20 +5,19 @@ exclude: ["include"]
 navbar:
   title: hgen48600
   left:
-    - text: "Home"
+    - text: Overview
       href: index.html
     - text: "About"
       href: about.html
     - text: "License"
       href: license.html
   right:
-    - icon: fa-github
+    - text: source
       href: https://github.com/stephens999/hgen48600
 output:
   html_document:
-    toc: true
-    toc_float: true
-    theme: cosmo
+    toc: no
+    theme: readable
     highlight: textmate
-    include:
-      after_body: include/footer.html
+    lib_dir: site_libs
+    self_contained: no
