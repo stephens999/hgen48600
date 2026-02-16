@@ -40,8 +40,8 @@ Change longitudes greater than 180 to negative numbers:
 ccr5$Long <- ifelse(ccr5$Long > 180,ccr5$Long - 360,ccr5$Long)
 ```
 
-We will use this function below to plot the allele frequencies on a
-map of Europe (and parts of Asia):
+We will use this function to plot the allele frequencies on a map of
+Europe (and parts of Asia):
 
 ```{r draw-map}
 draw_map <- function (dat)
